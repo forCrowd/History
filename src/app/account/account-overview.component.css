@@ -1,0 +1,15 @@
+
+mat-card {
+  padding: 16px !important;
+}
+
+mat-card a {
+  font-weight: bold;
+  color: #4a4a4a;
+}
+
+.content {
+  padding-top: 12px;
+  width: 248px;
+  float: left;
+}

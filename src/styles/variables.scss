@@ -1,0 +1,13 @@
+@import '~@angular/material/theming';
+
+// The brand palette, thanks to http://mcg.mbitson.com
+$brand-palette: ( 50 : #ebf6f1, 100 : #cde8db, 200 : #acd9c3, 300 : #8ac9ab, 400 : #71be99, 500 : #58b287, 600 : #50ab7f, 700 : #47a274, 800 : #3d996a, 900 : #2d8a57, A100 : #cfffe4, A200 : #9cffc7, A400 : #69ffab, A700 : #50ff9c, contrast: ( 50 : #000000, 100 : #000000, 200 : #000000, 300 : #000000, 400 : #000000, 500 : #000000, 600 : #000000, 700 : #000000, 800 : #ffffff, 900 : #ffffff, A100 : #000000, A200 : #000000, A400 : #000000, A700 : #000000, ) );
+
+// Define the palettes for your theme using the Material Design palettes available in palette.scss
+// (imported above). For each palette, you can optionally specify a default, lighter, and darker
+// hue.
+$app-primary: mat-palette($brand-palette);
+$app-warning: mat-palette($mat-blue-grey);
+
+// Custom color variables
+$primary: mat-color($app-primary);

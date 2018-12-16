@@ -1,0 +1,7 @@
+<div *ngIf="!currentUser.isAuthenticated()">
+  <home></home>
+</div>
+
+<div *ngIf="currentUser.isAuthenticated()">
+  <profile></profile>
+</div>
