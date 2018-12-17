@@ -17,6 +17,7 @@ import { LandingPageComponent } from "./components/landing-page.component";
 import { ProfileComponent } from "./components/profile.component";
 import { ProfileRemoveProjectComponent } from "./components/profile-remove-project.component";
 import { SearchComponent } from "./components/search.component";
+import { HistoryComponent } from "./components/history.component";
 
 // Services
 import { AppProjectService } from "./app-project.service";
@@ -63,6 +64,7 @@ const coreConfig: ICoreConfig = {
     ProfileComponent,
     ProfileRemoveProjectComponent,
     SearchComponent,
+    HistoryComponent,
   ],
   entryComponents: [
     ProfileRemoveProjectComponent
