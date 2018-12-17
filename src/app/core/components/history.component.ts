@@ -9,7 +9,7 @@ import { AppProjectService } from "../app-core.module";
 })
 export class HistoryComponent implements OnInit {
 
-  content: string = "";
+  entry: string = "";
   isBusy: boolean;
   project: Project = null;
 
@@ -84,14 +84,15 @@ export class HistoryComponent implements OnInit {
     this.projectService.createElementCell({
       ElementField: this.selectedElementField,
       ElementItem: elementItem,
-      StringValue: this.content,
+      StringValue: this.entry,
     });
 
     this.projectService.saveChanges().subscribe(() => {
       this.isBusy = false;
+      this.loadProject(this.project.Id);
+      this.entry = "";
     });
 
-    this.content = "";
   }
 
   // Set project element and field
@@ -113,7 +114,7 @@ export class HistoryComponent implements OnInit {
 
       // ElementCellSet
       this.selectedElementCellSet = this.selectedElementField.ElementCellSet as ElementCell[];
-
+      this.selectedElementCellSet = this.selectedElementCellSet.sort((a, b)=> (b.CreatedOn.getTime() - a.CreatedOn.getTime()));
       this.isBusy = false;
     });
   }

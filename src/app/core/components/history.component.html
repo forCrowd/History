@@ -7,7 +7,7 @@
   <form #historyForm="ngForm" autocomplete="off">
     <div class="g-mt-20 m-16">
       <mat-form-field>
-        <input matInput id="content" name="content" type="text" placeholder="Write something!" [(ngModel)]="content" class="form-control" required />
+        <input matInput id="entry" name="entry" type="text" placeholder="Write something!" [(ngModel)]="entry" class="form-control" required />
       </mat-form-field>
       <button mat-flat-button (click)="createHistroyContent()" [disabled]="historyForm.form.invalid || isBusy">
         Submit
@@ -15,7 +15,7 @@
     </div>
   </form>
 </div>
-<div *ngIf="selectedElementCellSet !== null" class="m-16">
+<div *ngIf="selectedElementCellSet !== null" class="m-16 mb-150">
   <ul class="timeline">
     <li class="tl-header">
       <div class="btn white">My History</div>

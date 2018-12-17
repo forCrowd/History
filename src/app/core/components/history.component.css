@@ -115,7 +115,7 @@ Timeline
 
 .tl-wrap {
   display: block;
-  margin-left: 6em;
+  margin-left: 10em;
   padding: 15px 0 15px 20px;
   border-style: solid;
   border-color: rgba(120, 130, 140, 0.13);
@@ -146,9 +146,9 @@ Timeline
   position: relative;
   top: 10px;
   float: left;
-  margin-left: -7.5em;
+  margin-left: -9.5em;
   display: block;
-  width: 4.5em;
+  width: 7em;
   text-align: right;
 }
 
@@ -168,7 +168,7 @@ Timeline
 
 .tl-header {
   display: block;
-  width: 12em;
+  width: 20em;
   text-align: center;
   margin-left: 1px;
 }
@@ -370,4 +370,8 @@ Timeline
 
 .b-primary {
   border-color: #4BC0C0;
+}
+
+.mb-150 {
+  margin-bottom: 150px !important;
 }
