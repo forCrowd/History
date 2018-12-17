@@ -1,126 +1,153 @@
-import { Component, OnDestroy, OnInit } from "@angular/core";
-import { SelectionModel } from "@angular/cdk/collections";
-import { ObservableMedia } from "@angular/flex-layout";
-import { ActivatedRoute, Router } from "@angular/router";
-import { MatDialog, MatTableDataSource } from "@angular/material";
-import { AuthService, Project, ProjectService, User } from "@forcrowd/backbone-client-core";
-import { Subscription } from "rxjs";
-import { finalize } from "rxjs/operators";
-
-import { ProfileRemoveProjectComponent } from "./profile-remove-project.component";
+import { Component, OnInit } from "@angular/core";
+import { ActivatedRoute } from "@angular/router";
+import { FormControl } from "@angular/forms";
+import { Project, ProjectService, Element, ElementField, ElementCell } from "@forcrowd/backbone-client-core";
 
 @Component({
   selector: "profile",
   templateUrl: "profile.component.html",
-  styleUrls: ["profile.component.css"]
+  styleUrls: ["profile.component.css"],
 })
-export class ProfileComponent implements OnDestroy, OnInit {
+export class ProfileComponent implements OnInit {
 
-  currentUser: User = null;
-  displayedColumns = ["select", "name", "ratingCount", "createdOn", "functions"];
-  dataSource = new MatTableDataSource<Project>([]);
-  mediaQuery = "";
-  profileUser: User = null;
-  selection = new SelectionModel<Project>(true, []);
-  subscriptions: Subscription[] = [];
+  project: Project = null;
+  selectedTab = new FormControl(0);
+  selectedTimeline: number = 0;
+  username: string = null;
+  timeline: string = null;
+  isBusy: boolean;
 
-  get isBusy(): boolean {
-    return this.authService.isBusy || this.projectService.isBusy;
-  };
-
-  constructor(private authService: AuthService,
-    private activatedRoute: ActivatedRoute,
-    private dialog: MatDialog,
-    private projectService: ProjectService,
-    private router: Router,
-    private media: ObservableMedia) {
+  get selectedElement(): Element {
+    return this.fields.selectedElement;
+  }
+  set selectedElement(value: Element) {
+    if (this.fields.selectedElement !== value) {
+      this.fields.selectedElement = value;
+    }
   }
 
-  confirmRemove() {
+  get selectedElementField(): ElementField {
+    return this.fields.selectedElementField;
+  }
+  set selectedElementField(value: ElementField) {
+    if (this.fields.selectedElementField !== value) {
+      this.fields.selectedElementField = value;
+    }
+  }
 
-    const dialogRef = this.dialog.open(ProfileRemoveProjectComponent);
+  get selectedElementCellSet(): ElementCell[] {
+    return this.fields.selectedElementCellSet;
+  }
+  set selectedElementCellSet(value: ElementCell[]) {
+    if (this.fields.selectedElementCellSet !== value) {
+      this.fields.selectedElementCellSet = value;
+    }
+  }
 
-    dialogRef.afterClosed().subscribe(confirmed => {
+  get selectedElementCell(): ElementCell {
+    return this.fields.selectedCell;
+  }
+  set selectedElementCell(value: ElementCell) {
+    if (this.fields.selectedCell !== value) {
+      this.fields.selectedCell = value;
+    }
+  }
 
-      if (!confirmed) return;
+  get selectedElementLikeCountSet(): ElementCell[] {
+    return this.fields.selectedElementLikeCountSet;
+  }
+  set selectedElementLikeCountSet(value: ElementCell[]) {
+    if (this.fields.selectedElementLikeCountSet !== value) {
+      this.fields.selectedElementLikeCountSet = value;
+    }
+  }
 
-      if (this.selection.selected.length > 0) {
+  private fields: {
+    selectedElement: Element,
+    selectedElementField: ElementField,
+    selectedElementCellSet: ElementCell[],
+    selectedCell: ElementCell,
+    selectedElementLikeCountSet: ElementCell[]
+  } = {
+      selectedElement: null,
+      selectedElementField: null,
+      selectedElementCellSet: null,
+      selectedCell: null,
+      selectedElementLikeCountSet: null
+    }
 
-        this.selection.selected.forEach(project => {
-          this.projectService.removeProject(project);
-        });
+  constructor(private activatedRoute: ActivatedRoute,
+    private projectService: ProjectService) {
+  }
 
-        this.selection.clear();
-
-        this.projectService.saveChanges().pipe(
-          finalize(() => {
-            this.dataSource.data = this.profileUser.ProjectSet;
-          })).subscribe();
-      }
+  changeLikeCount(value: number, index: number): void {
+    this.isBusy = true;
+    this.selectedElementLikeCountSet[index].UserElementCellSet[0].DecimalValue += value;
+    this.projectService.saveChanges().subscribe(() => {
+      this.isBusy = false;
     });
   }
 
-  /** Whether the number of selected elements matches the total number of rows. */
-  isAllSelected() {
-    const numSelected = this.selection.selected.length;
-    const numRows = this.dataSource.data.length;
-    return numSelected === numRows;
+  // Set selected timeline element
+  selectTimeline(value: number): void {
+    this.selectedTimeline = value;
+    this.selectedElement = this.project.ElementSet[value];
+    this.selectedElementField = this.selectedElement.ElementFieldSet[0];
+    this.selectedElementLikeCountSet = this.selectedElement.ElementFieldSet[1].ElementCellSet; // for Like - Dislike
+    this.selectedElementCellSet = this.selectedElementField.ElementCellSet as ElementCell[];
+    this.selectedElementCellSet = this.selectedElementCellSet.sort((a, b) => (b.CreatedOn.getTime() - a.CreatedOn.getTime()));
   }
 
-  /** Selects all rows if they are not all selected; otherwise clear selection. */
-  masterToggle() {
-    this.isAllSelected() ?
-      this.selection.clear() :
-      this.dataSource.data.forEach(row => this.selection.select(row));
-  }
+  loadProject(projectId: number) {
+    this.projectService.getProjectExpanded<Project>(projectId)
+      .subscribe(project => {
 
-  ngOnDestroy(): void {
-    for (let i = 0; i < this.subscriptions.length; i++) {
-      this.subscriptions[i].unsubscribe();
-    }
+        if (!project) {
+          return;
+        }
+
+        // Project History
+        this.project = project;
+
+        if (this.timeline !== undefined) {
+          for (var i = 0; i < this.project.ElementSet.length; i++) {
+            if (this.timeline === this.project.ElementSet[i].Name) {
+              this.selectTimeline(i);
+              return;
+            }
+          }
+        } else {
+          this.timeline = null;
+          this.selectedElement = this.project.ElementSet[this.selectedTimeline];
+        }
+
+        this.selectedElementField = this.selectedElement.ElementFieldSet[0];
+        this.selectedElementCellSet = this.selectedElementField.ElementCellSet as ElementCell[];
+        this.selectedElementLikeCountSet = this.selectedElement.ElementFieldSet[1].ElementCellSet.sort((a, b) => (b.CreatedOn.getTime() - a.CreatedOn.getTime()));
+        this.selectedElementCellSet = this.selectedElementCellSet.sort((a, b) => (b.CreatedOn.getTime() - a.CreatedOn.getTime()));
+      });
   }
 
   ngOnInit(): void {
 
-    this.currentUser = this.authService.currentUser;
-    const profileUserName = this.activatedRoute.snapshot.params["username"] || this.currentUser.UserName;
+    this.username = this.activatedRoute.snapshot.params["username"];
+    this.timeline = this.activatedRoute.snapshot.params["timeline"];
 
-    this.authService.getUser(profileUserName)
-      .subscribe(user => {
+    this.projectService.getProjectSet<Project>(this.username)
+      .subscribe(projectSet => {
 
-        // Not found, navigate to 404
-        if (user === null) {
-          const url = window.location.href.replace(window.location.origin, "");
-          this.router.navigate(["/app/not-found", { url: url }]);
-          return;
-        }
+        for (var i = 0; i < projectSet.length; i++) {
+          var project = projectSet[i];
 
-        this.profileUser = user;
+          if (project.Name === "History App") {
+            // Project History
+            this.project = project;
+            this.loadProject(this.project.Id);
+            return;
+          }
 
-        this.dataSource.data = this.profileUser.ProjectSet;
-
-        this.setColumns();
+        };
       });
-
-    // Media queries
-    var mediaSubscription = this.media.subscribe(change => {
-      this.mediaQuery = change.mqAlias;
-      this.setColumns();
-    });
-    this.subscriptions.push(mediaSubscription);
   }
 
-  private setColumns() {
-    this.displayedColumns = this.currentUser === this.profileUser
-      ? (this.mediaQuery !== "xs" && this.mediaQuery !== "sm")
-        ? ["select", "name", "ratingCount", "createdOn", "functions"]
-        : ["select", "name", "functions"]
-      : (this.mediaQuery !== "xs" && this.mediaQuery !== "sm")
-        ? ["name", "ratingCount", "createdOn"]
-        : ["name", "createdOn"];
-  }
-
-  trackBy(index: number, item: Project) {
-    return item.Id;
-  }
 }

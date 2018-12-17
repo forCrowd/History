@@ -1,0 +1,87 @@
+<div class="m-16">
+  <h1>
+    Timeline
+  </h1>
+</div>
+
+<div class="m-16" *ngIf="project?.ElementSet">
+  <mat-card *ngFor="let timeline of project.ElementSet">
+      <mat-card-title>
+        {{ timeline.Name }}
+      </mat-card-title>
+      <mat-card-content>
+        {{ timeline?.ElementItemSet?.length / 2 }}
+      </mat-card-content>
+  </mat-card>
+</div>
+
+<div class="m-16">
+  <form #historyForm="ngForm" autocomplete="off">
+    <mat-form-field>
+      <input matInput id="entry" name="entry" type="text" placeholder="Write something or Write new timeline name"
+        [(ngModel)]="entry" class="form-control" required />
+    </mat-form-field>
+    <button mat-flat-button *ngIf="project?.ElementSet?.length > 0" (click)="createHistroyContent()" [disabled]="historyForm.form.invalid || isBusy">
+      Submit
+    </button>
+    <button mat-flat-button class="other" *ngIf="selectedElementCell !== null || changeElementName" (click)="cancelEditing()"
+      color="warn" [disabled]="historyForm.form.invalid || isBusy">
+      Cancel
+    </button>
+    <button mat-flat-button class="other" *ngIf="!changeElementName" (click)="createNewHistroy()" [disabled]="historyForm.form.invalid || isBusy">
+      New Timeline
+    </button>
+  </form>
+</div>
+
+<div class="m-16 d-g">
+  <mat-tab-group *ngIf="project !== null" (selectedIndexChange)="selectTimeline($event)" [selectedIndex]="selectedTab.value">
+    <mat-tab *ngFor="let history of project.ElementSet" label="{{ history.Name }}">
+
+      <div *ngIf="selectedElementCellSet !== null" class="m-16 mb-150">
+        <ul class="timeline">
+
+          <li class="tl-header">
+            <div class="btn white">
+              <a (click)="editTimelineHeader(history)">
+                <i class="fa fa-pencil" aria-hidden="true"></i>
+                {{ history.Name }}
+              </a>
+            </div>
+          </li>
+
+          <li class="tl-item" *ngFor="let timeline of selectedElementCellSet; let i = index">
+            <div class="tl-wrap b-primary">
+              <span class="tl-date text-muted">{{ timeline.CreatedOn | amTimeAgo }}</span>
+              <div (click)="edit(timeline)" class="tl-content box-color text-color box-shadow p-a-sm f-l tl-c-w80p">
+                <span class="arrow b-white left pull-top"></span>
+                {{ timeline.StringValue }}
+              </div>
+              <div class="tl-content tl-content-bg-ld box-color text-color box-shadow p-a-sm">
+                <span class="arrow arrow-bg-ld b-white left pull-top"></span>
+                <span class="pull-right">
+                  <i class="fa fa-times" (click)="removeHistoryItem(timeline.ElementItem)" aria-hidden="true"></i>
+                </span>
+                <span [ngClass]="{'warning': selectedElementLikeCountSet[i]?.UserElementCellSet[0]?.DecimalValue < 0, 'success': selectedElementLikeCountSet[i]?.UserElementCellSet[0]?.DecimalValue > 0 }"
+                  class="pull-right label" >
+                  {{ selectedElementLikeCountSet[i]?.UserElementCellSet[0]?.DecimalValue }}
+                </span>
+                <i (click)="!this.isBusy ? changeLikeCount(-1, i) : null" class="fa fa-thumbs-down p2406" aria-hidden="true"></i>
+                <span class="like">
+                  <i (click)="!this.isBusy ? changeLikeCount(1, i) : null" class="fa fa-thumbs-up p2406" aria-hidden="true"></i>
+                </span>
+              </div>
+            </div>
+          </li>
+
+          <li class="tl-header">
+            <div (click)="deleteTimeline(history)" class="btn btn-sm white btn-rounded">Delete</div>
+          </li>
+
+        </ul>
+      </div>
+
+    </mat-tab>
+  </mat-tab-group>
+
+</div>
