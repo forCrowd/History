@@ -375,3 +375,12 @@ Timeline
 .mb-150 {
   margin-bottom: 150px !important;
 }
+
+div i {
+  float: right;
+  padding: 2px 4px 0 16px;
+  cursor: pointer;
+}
+  div i:hover {
+    color: red;
+  }

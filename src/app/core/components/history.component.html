@@ -25,6 +25,7 @@
         <span class="tl-date text-muted">{{ cell.CreatedOn | amTimeAgo }}</span>
         <div class="tl-content box-color text-color box-shadow p-a-sm">
           <span class="arrow b-white left pull-top"></span>
+          <i class="fa fa-times" (click)="removeHistoryItem(cell.ElementItem)" aria-hidden="true"></i>
           {{ cell.StringValue }}
         </div>
       </div>

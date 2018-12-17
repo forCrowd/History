@@ -24,6 +24,7 @@ import { AppProjectService } from "./app-project.service";
 import { AuthGuard } from "./auth-guard.service";
 import { CanDeactivateGuard } from "./can-deactivate-guard.service";
 import { DynamicTitleResolve } from "./dynamic-title-resolve.service";
+import { RemoveHistoryConfirmComponent } from "./components/remove-history.component";
 
 export { AppProjectService, AuthGuard, CanDeactivateGuard, DynamicTitleResolve }
 
@@ -65,9 +66,11 @@ const coreConfig: ICoreConfig = {
     ProfileRemoveProjectComponent,
     SearchComponent,
     HistoryComponent,
+    RemoveHistoryConfirmComponent,
   ],
   entryComponents: [
-    ProfileRemoveProjectComponent
+    ProfileRemoveProjectComponent,
+    RemoveHistoryConfirmComponent
   ],
   exports: [
     RouterModule,

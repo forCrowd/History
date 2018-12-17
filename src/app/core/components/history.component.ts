@@ -1,6 +1,9 @@
 import { Component, OnInit } from "@angular/core";
-import { Project, AuthService, ProjectService, NotificationService, Element, ElementItem, ElementField, ElementCell } from "@forcrowd/backbone-client-core";
+import { MatDialog } from "@angular/material";
+import { Project, AuthService, ProjectService, Element, ElementItem, ElementField, ElementCell } from "@forcrowd/backbone-client-core";
+import { RemoveHistoryConfirmComponent } from "./remove-history.component";
 import { AppProjectService } from "../app-core.module";
+import { finalize } from "rxjs/operators";
 
 @Component({
   selector: "history",
@@ -55,7 +58,8 @@ export class HistoryComponent implements OnInit {
     }
 
   constructor(private authService: AuthService,
-    private projectService: ProjectService) {
+    private projectService: ProjectService,
+    private dialog: MatDialog) {
   }
 
   // Create project
@@ -114,9 +118,26 @@ export class HistoryComponent implements OnInit {
 
       // ElementCellSet
       this.selectedElementCellSet = this.selectedElementField.ElementCellSet as ElementCell[];
+
       this.selectedElementCellSet = this.selectedElementCellSet.sort((a, b)=> (b.CreatedOn.getTime() - a.CreatedOn.getTime()));
       this.isBusy = false;
     });
+  }
+
+  removeHistoryItem(elementItem: ElementItem) {
+    const dialogRef = this.dialog.open(RemoveHistoryConfirmComponent);
+
+    dialogRef.afterClosed().subscribe(confirmed => {
+
+      if (!confirmed) return;
+
+      this.projectService.removeElementItem(elementItem);
+      this.projectService.saveChanges().pipe(
+        finalize(() => {
+          this.loadProject(this.project.Id);
+        })).subscribe();
+    });
+
   }
 
   ngOnInit(): void {
