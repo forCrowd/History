@@ -184,6 +184,8 @@ export class HistoryComponent implements OnInit {
       this.projectService.removeElementItem(elementItem);
       this.projectService.saveChanges().pipe(
         finalize(() => {
+          this.entry = "";
+          this.selectedElementCell = null;
           this.loadProject(this.project.Id);
         })).subscribe();
     });
