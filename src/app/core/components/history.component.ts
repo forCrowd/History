@@ -2,6 +2,7 @@ import { Component, OnInit } from "@angular/core";
 import { MatDialog } from "@angular/material";
 import { Project, AuthService, ProjectService, Element, ElementItem, ElementField, ElementCell } from "@forcrowd/backbone-client-core";
 import { RemoveHistoryConfirmComponent } from "./remove-history.component";
+import { ConfirmEditComponent } from "./confirm-edit.component";
 import { AppProjectService } from "../app-core.module";
 import { finalize } from "rxjs/operators";
 
@@ -46,6 +47,7 @@ export class HistoryComponent implements OnInit {
       this.fields.selectedElementCellSet = value;
     }
   }
+
   get selectedElementCell(): ElementCell {
     return this.fields.selectedCell;
   }
@@ -74,7 +76,8 @@ export class HistoryComponent implements OnInit {
 
   cancelEditing() {
     this.entry = "";
-    this.selectedElementCell = null
+    this.selectedElementCell = null;
+    this.isBusy = false;
   }
 
   // Create project
@@ -93,6 +96,7 @@ export class HistoryComponent implements OnInit {
     this.isBusy = true;
 
     if (this.selectedElementCell === null) {
+
       // New Item
       const elementItem = this.projectService.createElementItem({
         Element: this.selectedElement,
@@ -105,16 +109,37 @@ export class HistoryComponent implements OnInit {
         ElementItem: elementItem,
         StringValue: this.entry,
       });
+
+      this.projectService.saveChanges().subscribe(() => {
+        this.entry = "";
+        this.loadProject(this.project.Id);
+        this.isBusy = false;
+      });
+
     } else {
-      // change cell string value
-      this.selectedElementCell.StringValue = this.entry;
+      this.selectedElementCell.StringValue !== this.entry ? this.change()
+        : this.isBusy = false;
     }
 
-    this.projectService.saveChanges().subscribe(() => {
-      this.selectedElementCell = null;
-      this.entry = "";
-      this.loadProject(this.project.Id);
-      this.isBusy = false;
+  }
+
+  change(): void {
+    // change cell string value
+    const dialogRef = this.dialog.open(ConfirmEditComponent);
+    dialogRef.afterClosed().subscribe(confirmed => {
+
+      if (!confirmed) {
+        this.cancelEditing();
+        return;
+      }
+
+      this.selectedElementCell.StringValue = this.entry;
+      this.projectService.saveChanges().subscribe(() => {
+        this.selectedElementCell = null;
+        this.entry = "";
+        this.loadProject(this.project.Id);
+        this.isBusy = false;
+      });
     });
 
   }
