@@ -46,15 +46,25 @@ export class HistoryComponent implements OnInit {
       this.fields.selectedElementCellSet = value;
     }
   }
+  get selectedElementCell(): ElementCell {
+    return this.fields.selectedCell;
+  }
+  set selectedElementCell(value: ElementCell) {
+    if (this.fields.selectedCell !== value) {
+      this.fields.selectedCell = value;
+    }
+  }
 
   private fields: {
+    selectedElement: Element,
     selectedElementField: ElementField,
     selectedElementCellSet: ElementCell[],
-    selectedElement: Element
+    selectedCell: ElementCell,
   } = {
+    selectedElement: null,
     selectedElementField: null,
     selectedElementCellSet: null,
-    selectedElement: null
+    selectedCell: null
     }
 
   constructor(private authService: AuthService,
@@ -64,7 +74,6 @@ export class HistoryComponent implements OnInit {
 
   // Create project
   createProjectHistory(): void {
-    console.log(this.project);
     if (this.project === null) {
       this.project = (this.projectService as AppProjectService).createProjectHistory();
       this.projectService.saveChanges().subscribe( () => {
@@ -78,25 +87,36 @@ export class HistoryComponent implements OnInit {
     if (!this.currentUser || !this.currentUser.isAuthenticated()) return;
     this.isBusy = true;
 
-    // New Item
-    const elementItem = this.projectService.createElementItem({
-      Element: this.selectedElement,
-      Name: `History ${this.selectedElement.ElementItemSet.length  + 1}`,
-    }) as ElementItem;
+    if (this.selectedElementCell === null) {
+      // New Item
+      const elementItem = this.projectService.createElementItem({
+        Element: this.selectedElement,
+        Name: `History ${this.selectedElement.ElementItemSet.length  + 1}`,
+      }) as ElementItem;
 
-    // Cell
-    this.projectService.createElementCell({
-      ElementField: this.selectedElementField,
-      ElementItem: elementItem,
-      StringValue: this.entry,
-    });
+      // Cell
+      this.projectService.createElementCell({
+        ElementField: this.selectedElementField,
+        ElementItem: elementItem,
+        StringValue: this.entry,
+      });
+    } else {
+      // change cell string value
+      this.selectedElementCell.StringValue = this.entry;
+    }
 
     this.projectService.saveChanges().subscribe(() => {
-      this.isBusy = false;
-      this.loadProject(this.project.Id);
+      this.selectedElementCell = null;
       this.entry = "";
+      this.loadProject(this.project.Id);
+      this.isBusy = false;
     });
 
+  }
+
+  edit(elementCell: ElementCell) {
+    this.entry = elementCell.StringValue;
+    this.selectedElementCell = elementCell;
   }
 
   // Set project element and field
