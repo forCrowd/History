@@ -12,6 +12,9 @@
       <button mat-flat-button (click)="createHistroyContent()" [disabled]="historyForm.form.invalid || isBusy">
         Submit
       </button>
+      <button mat-flat-button *ngIf="selectedElementCell !== null" (click)="cancelEditing()" color="warn" [disabled]="historyForm.form.invalid || isBusy">
+        Cancel editing!
+      </button>
     </div>
   </form>
 </div>

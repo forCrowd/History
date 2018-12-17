@@ -72,6 +72,11 @@ export class HistoryComponent implements OnInit {
     private dialog: MatDialog) {
   }
 
+  cancelEditing() {
+    this.entry = "";
+    this.selectedElementCell = null
+  }
+
   // Create project
   createProjectHistory(): void {
     if (this.project === null) {
