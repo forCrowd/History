@@ -4,7 +4,7 @@
   </h1>
 </div>
 <div class="m-16">
-  <mat-tab-group *ngIf="project !== null" (selectedIndexChange)="selectTimeline($event)" [selectedIndex]="selectedTab.value">
+  <mat-tab-group *ngIf="timeline === null" (selectedIndexChange)="selectTimeline($event)" [selectedIndex]="selectedTab.value">
     <mat-tab *ngFor="let history of project.ElementSet" label="{{ history.Name }}">
 
       <div *ngIf="selectedElementCellSet !== null" class="m-16 mb-150">
@@ -31,5 +31,27 @@
 
     </mat-tab>
   </mat-tab-group>
+
+  <div *ngIf="timeline !== null" class="m-16 mb-150">
+    <ul class="timeline">
+      <li class="tl-header">
+        <div class="btn white">
+          {{ selectedElement?.Name }}
+        </div>
+      </li>
+      <li class="tl-item" *ngFor="let cell of selectedElementCellSet">
+        <div class="tl-wrap b-primary">
+          <span class="tl-date text-muted">{{ cell.CreatedOn | amTimeAgo }}</span>
+          <div class="tl-content box-color text-color box-shadow p-a-sm">
+            <span class="arrow b-white left pull-top"></span>
+            {{ cell.StringValue }}
+          </div>
+        </div>
+      </li>
+      <li class="tl-header">
+        <div class="btn btn-sm white btn-rounded">History Timeline</div>
+      </li>
+    </ul>
+  </div>
 
 </div>

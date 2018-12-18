@@ -48,6 +48,7 @@ const appCoreRoutes: Routes = [
 
   // Users
   { path: ":username", component: ProfileComponent, resolve: { title: DynamicTitleResolve } },
+  { path: ":username/:timeline", component: ProfileComponent, resolve: { title: DynamicTitleResolve } },
 ];
 
 const coreConfig: ICoreConfig = {

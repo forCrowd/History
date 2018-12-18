@@ -14,6 +14,7 @@ export class ProfileComponent implements OnInit {
   selectedTab = new FormControl(0);
   selectedTimeline: number = 0;
   username: string = null;
+  timeline: string = null;
 
   get selectedElement(): Element {
     return this.fields.selectedElement;
@@ -86,7 +87,19 @@ export class ProfileComponent implements OnInit {
 
         // Project History
         this.project = project;
-        this.selectedElement = this.project.ElementSet[this.selectedTimeline];
+
+        if (this.timeline !== undefined) {
+          for (var i = 0; i < this.project.ElementSet.length; i++) {
+            if (this.timeline === this.project.ElementSet[i].Name) {
+              this.selectTimeline(i);
+              return;
+            }
+          }
+        } else {
+          this.timeline = null;
+          this.selectedElement = this.project.ElementSet[this.selectedTimeline];
+        }
+
         this.selectedElementField = this.selectedElement.ElementFieldSet[0];
         this.selectedElementCellSet = this.selectedElementField.ElementCellSet as ElementCell[];
         this.selectedElementCellSet = this.selectedElementCellSet.sort((a, b) => (b.CreatedOn.getTime() - a.CreatedOn.getTime()));
@@ -96,6 +109,7 @@ export class ProfileComponent implements OnInit {
   ngOnInit(): void {
 
     this.username = this.activatedRoute.snapshot.params["username"];
+    this.timeline = this.activatedRoute.snapshot.params["timeline"];
 
     this.projectService.getProjectSet<Project>(this.username)
       .subscribe(projectSet => {
