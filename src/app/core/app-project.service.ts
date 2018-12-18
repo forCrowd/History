@@ -17,7 +17,7 @@ export class AppProjectService extends ProjectService {
     // Element
     const element = super.createElement({
       Project: project,
-      Name: "New histroy element"
+      Name: "First Histroy Element"
     }) as Element;
 
     // Field
@@ -31,13 +31,14 @@ export class AppProjectService extends ProjectService {
     // Item
     const elementItem = super.createElementItem({
       Element: element,
-      Name: "First history title"
+      Name: "First History Item"
     }) as ElementItem;
 
     // Cell 1
-    const cell = super.createElementCell({
+    super.createElementCell({
       ElementField: elementField,
-      ElementItem: elementItem
+      ElementItem: elementItem,
+      StringValue: "Please edit me"
     });
 
     return project;

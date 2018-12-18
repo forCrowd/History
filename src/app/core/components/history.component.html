@@ -5,37 +5,49 @@
 </div>
 <div class="m-16">
   <form #historyForm="ngForm" autocomplete="off">
-    <div class="g-mt-20 m-16">
+    <div class="m-16">
       <mat-form-field>
-        <input matInput id="entry" name="entry" type="text" placeholder="Write something!" [(ngModel)]="entry" class="form-control" required />
+        <input matInput id="entry" name="entry" type="text" placeholder="Write something / write timeline name" [(ngModel)]="entry" class="form-control" required />
       </mat-form-field>
       <button mat-flat-button (click)="createHistroyContent()" [disabled]="historyForm.form.invalid || isBusy">
         Submit
       </button>
-      <button mat-flat-button *ngIf="selectedElementCell !== null" (click)="cancelEditing()" color="warn" [disabled]="historyForm.form.invalid || isBusy">
+      <button mat-flat-button class="other" (click)="createNewHistroy()" [disabled]="historyForm.form.invalid || isBusy">
+        Create New History
+      </button>
+      <button mat-flat-button class="other" *ngIf="selectedElementCell !== null" (click)="cancelEditing()" color="warn" [disabled]="historyForm.form.invalid || isBusy">
         Cancel editing!
       </button>
     </div>
   </form>
-</div>
-<div *ngIf="selectedElementCellSet !== null" class="m-16 mb-150">
-  <ul class="timeline">
-    <li class="tl-header">
-      <div class="btn white">My History</div>
-    </li>
-    <li class="tl-item" *ngFor="let cell of selectedElementCellSet">
-      <div class="tl-wrap b-primary">
-        <span class="tl-date text-muted">{{ cell.CreatedOn | amTimeAgo }}</span>
-        <div (click)="edit(cell)" class="tl-content box-color text-color box-shadow p-a-sm">
-          <span class="arrow b-white left pull-top"></span>
-          <i class="fa fa-times" (click)="removeHistoryItem(cell.ElementItem)" aria-hidden="true"></i>
-          {{ cell.StringValue }}
-        </div>
-      </div>
-    </li>
+<br>
+  <mat-tab-group *ngIf="project !== null" (selectedIndexChange)="selectTimeline($event)" [selectedIndex]="selectedTab.value">
+    <mat-tab *ngFor="let history of project.ElementSet" label="{{ history.Name }}">
 
-    <li class="tl-header">
-      <div class="btn btn-sm white btn-rounded">History Timeline on Backbone</div>
-    </li>
-  </ul>
+      <div *ngIf="selectedElementCellSet !== null" class="m-16 mb-150">
+        <ul class="timeline">
+          <li class="tl-header">
+            <div class="btn white">{{ history.Name }}</div>
+          </li>
+          <li class="tl-item" *ngFor="let cell of selectedElementCellSet">
+            <div class="tl-wrap b-primary">
+              <span class="tl-date text-muted">{{ cell.CreatedOn | amTimeAgo }}</span>
+              <div (click)="edit(cell)" class="tl-content box-color text-color box-shadow p-a-sm">
+                <span class="arrow b-white left pull-top"></span>
+                <i class="fa fa-times" (click)="removeHistoryItem(cell.ElementItem)" aria-hidden="true"></i>
+                {{ cell.StringValue }}
+              </div>
+            </div>
+          </li>
+
+          <li class="tl-header">
+            <div class="btn btn-sm white btn-rounded">History Timeline</div>
+          </li>
+        </ul>
+      </div>
+
+    </mat-tab>
+  </mat-tab-group>
+
 </div>
+

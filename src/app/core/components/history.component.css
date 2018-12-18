@@ -364,6 +364,10 @@ Timeline
   margin: 16px 0 0 34px;
 }
 
+.mat-flat-button.other {
+  margin: 16px 0 0 6px;
+}
+
 .primary {
   color: rgba(255, 255, 255, 0.87);
   background-color: #4BC0C0;

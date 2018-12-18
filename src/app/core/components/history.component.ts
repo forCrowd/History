@@ -1,10 +1,15 @@
 import { Component, OnInit } from "@angular/core";
+import { FormControl } from "@angular/forms";
 import { MatDialog } from "@angular/material";
 import { Project, AuthService, ProjectService, Element, ElementItem, ElementField, ElementCell } from "@forcrowd/backbone-client-core";
+import { finalize } from "rxjs/operators";
+
+// Component
 import { RemoveHistoryConfirmComponent } from "./remove-history.component";
 import { ConfirmEditComponent } from "./confirm-edit.component";
+
+// Service
 import { AppProjectService } from "../app-core.module";
-import { finalize } from "rxjs/operators";
 
 @Component({
   selector: "history",
@@ -16,6 +21,8 @@ export class HistoryComponent implements OnInit {
   entry: string = "";
   isBusy: boolean;
   project: Project = null;
+  selectedTab = new FormControl(0);
+  selectedTimeline: number = 0;
 
   get currentUser() {
     return this.authService.currentUser;
@@ -63,10 +70,10 @@ export class HistoryComponent implements OnInit {
     selectedElementCellSet: ElementCell[],
     selectedCell: ElementCell,
   } = {
-    selectedElement: null,
-    selectedElementField: null,
-    selectedElementCellSet: null,
-    selectedCell: null
+      selectedElement: null,
+      selectedElementField: null,
+      selectedElementCellSet: null,
+      selectedCell: null
     }
 
   constructor(private authService: AuthService,
@@ -80,17 +87,17 @@ export class HistoryComponent implements OnInit {
     this.isBusy = false;
   }
 
-  // Create project
+  // Create project (only one time)
   createProjectHistory(): void {
     if (this.project === null) {
       this.project = (this.projectService as AppProjectService).createProjectHistory();
-      this.projectService.saveChanges().subscribe( () => {
+      this.projectService.saveChanges().subscribe(() => {
         this.isBusy = false;
       });
     }
   }
 
-  // Create a new entry
+  // Create a new entry in timeline
   createHistroyContent(): void {
     if (!this.currentUser || !this.currentUser.isAuthenticated()) return;
     this.isBusy = true;
@@ -100,7 +107,7 @@ export class HistoryComponent implements OnInit {
       // New Item
       const elementItem = this.projectService.createElementItem({
         Element: this.selectedElement,
-        Name: `History ${this.selectedElement.ElementItemSet.length  + 1}`,
+        Name: `History ${this.selectedElement.ElementItemSet.length + 1}`,
       }) as ElementItem;
 
       // Cell
@@ -120,9 +127,46 @@ export class HistoryComponent implements OnInit {
       this.selectedElementCell.StringValue !== this.entry ? this.change()
         : this.isBusy = false;
     }
-
   }
 
+  // Create a new History Timeline
+  createNewHistroy(): void {
+    this.isBusy = true;
+
+    // New Timeline Element
+    const element = this.projectService.createElement({
+      Project: this.project,
+      Name: this.entry
+    }) as Element;
+
+    // Field
+    const elementField = this.projectService.createElementField({
+      Element: element,
+      Name: this.entry,
+      DataType: 1,
+      SortOrder: this.project.ElementSet.length + 1
+    }) as ElementField;
+
+    // Item
+    const elementItem = this.projectService.createElementItem({
+      Element: element,
+      Name: this.entry
+    }) as ElementItem;
+
+    // Cell
+    this.projectService.createElementCell({
+      ElementField: elementField,
+      ElementItem: elementItem,
+      StringValue: "First"
+    });
+
+    this.projectService.saveChanges().subscribe(() => {
+      this.selectedTab.setValue(this.project.ElementSet.length + 1);
+      this.isBusy = false;
+    });
+  }
+
+  // Change timeline item value
   change(): void {
     // change cell string value
     const dialogRef = this.dialog.open(ConfirmEditComponent);
@@ -144,6 +188,7 @@ export class HistoryComponent implements OnInit {
 
   }
 
+  // Edit item
   edit(elementCell: ElementCell) {
     this.entry = elementCell.StringValue;
     this.selectedElementCell = elementCell;
@@ -152,28 +197,41 @@ export class HistoryComponent implements OnInit {
   // Set project element and field
   loadProject(projectId: number) {
     this.projectService.getProjectExpanded<Project>(projectId)
-    .subscribe(project => {
+      .subscribe(project => {
 
-      if (!project) {
-        return;
-      }
+        if (!project) {
+          return;
+        }
 
-      this.project = project;
+        // Project History
+        this.project = project;
 
-      // Selected element
-      this.selectedElement = this.project.ElementSet[0];
+        // Selected element
+        this.selectedElement = this.project.ElementSet[this.selectedTimeline];
 
-      // ElementField
-      this.selectedElementField = this.selectedElement.ElementFieldSet[0];
+        // ElementField
+        this.selectedElementField = this.selectedElement.ElementFieldSet[0];
 
-      // ElementCellSet
-      this.selectedElementCellSet = this.selectedElementField.ElementCellSet as ElementCell[];
+        // ElementCellSet
+        this.selectedElementCellSet = this.selectedElementField.ElementCellSet as ElementCell[];
 
-      this.selectedElementCellSet = this.selectedElementCellSet.sort((a, b)=> (b.CreatedOn.getTime() - a.CreatedOn.getTime()));
-      this.isBusy = false;
-    });
+        this.selectedElementCellSet = this.selectedElementCellSet.sort((a, b) => (b.CreatedOn.getTime() - a.CreatedOn.getTime()));
+        this.isBusy = false;
+      });
   }
 
+  // Set selected timeline element
+  selectTimeline(value: number): void {
+    this.isBusy = true;
+    this.selectedTimeline = value;
+    this.selectedElement = this.project.ElementSet[value];
+    this.selectedElementField = this.selectedElement.ElementFieldSet[0];
+    this.selectedElementCellSet = this.selectedElementField.ElementCellSet as ElementCell[];
+    this.selectedElementCellSet = this.selectedElementCellSet.sort((a, b) => (b.CreatedOn.getTime() - a.CreatedOn.getTime()));
+    this.isBusy = false;
+  }
+
+  // Remove selected item
   removeHistoryItem(elementItem: ElementItem) {
     const dialogRef = this.dialog.open(RemoveHistoryConfirmComponent);
 
@@ -200,9 +258,7 @@ export class HistoryComponent implements OnInit {
     this.authService.getUser(this.currentUser.UserName).subscribe(() => {
 
       for (var i = 0; i < this.currentUser.ProjectSet.length; i++) {
-
         var project = this.currentUser.ProjectSet[i];
-
         if (project.Name === "History App") {
           this.project = project;
           this.loadProject(this.project.Id);
@@ -215,4 +271,4 @@ export class HistoryComponent implements OnInit {
 
   }
 
- }
+}
