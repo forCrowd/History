@@ -1,85 +1,35 @@
-<div *ngIf="profileUser" class="m-16">
-    <h1>Dashboard</h1>
+<div class="m-16">
+  <h1>
+    {{ username | titlecase }}`s Timeline
+  </h1>
+</div>
+<div class="m-16">
+  <mat-tab-group *ngIf="project !== null" (selectedIndexChange)="selectTimeline($event)" [selectedIndex]="selectedTab.value">
+    <mat-tab *ngFor="let history of project.ElementSet" label="{{ history.Name }}">
 
-    <h2>{{ currentUser === profileUser ? "My projects" : profileUser.UserName + " projects" }}</h2>
-
-    <mat-divider></mat-divider>
-
-    <div *ngIf="currentUser === profileUser" class="edit-row">
-      <button mat-button
-              [disabled]="isBusy"
-              routerLink="/projects/new">
-        <i class="material-icons">add</i>
-        Add Project
-      </button>
-      <button mat-button
-              [disabled]="isBusy || selection.selected.length === 0"
-              (click)="confirmRemove()"
-              [hidden]="dataSource.data.length === 0">
-        <i class="material-icons">delete</i>
-        Delete
-      </button>
-    </div>
-
-    <mat-card [hidden]="dataSource.data.length > 0">
-      <div class="noResults">
-        Nothing to display!
-      </div>
-    </mat-card>
-
-    <mat-card class="g-mb-150" [hidden]="dataSource.data.length === 0">
-      <table mat-table [dataSource]="dataSource" [trackBy]="trackBy" [hidden]="dataSource.data.length === 0">
-        <!-- Checkbox Column -->
-        <ng-container matColumnDef="select">
-          <th mat-header-cell *matHeaderCellDef>
-            <mat-checkbox (change)="$event ? masterToggle() : null"
-                          [checked]="selection.hasValue() && isAllSelected()"
-                          [indeterminate]="selection.hasValue() && !isAllSelected()">
-            </mat-checkbox>
-          </th>
-          <td mat-cell *matCellDef="let project">
-            <mat-checkbox (click)="$event.stopPropagation()"
-                          (change)="$event ? selection.toggle(project) : null"
-                          [checked]="selection.isSelected(project)">
-            </mat-checkbox>
-          </td>
-        </ng-container>
-
-        <!-- Name -->
-        <ng-container matColumnDef="name">
-          <th mat-header-cell *matHeaderCellDef> Project </th>
-          <td mat-cell *matCellDef="let project">
-            <a *ngIf="currentUser === profileUser" routerLink="/projects/{{ project.Id }}/edit"> {{ project.Name }} </a>
-            <a *ngIf="currentUser !== profileUser" routerLink="/projects/{{ project.Id }}"> {{ project.Name }} </a>
-          </td>
-        </ng-container>
-
-        <!-- RatingCount -->
-        <ng-container matColumnDef="ratingCount">
-          <th mat-header-cell *matHeaderCellDef> # Ratings </th>
-          <td mat-cell *matCellDef="let project"> {{ project.RatingCount }} </td>
-        </ng-container>
-
-        <!-- CreatedOn -->
-        <ng-container matColumnDef="createdOn">
-          <th mat-header-cell *matHeaderCellDef> Created On</th>
-          <td mat-cell *matCellDef="let project"> {{ project.CreatedOn | amTimeAgo }} </td>
-        </ng-container>
-
-        <!-- Functions -->
-        <ng-container matColumnDef="functions">
-          <th mat-header-cell *matHeaderCellDef></th>
-          <td mat-cell *matCellDef="let project">
-            <div class="pull-right">
-              <button mat-button routerLink="/projects/{{ project.Id }}" [disabled]="isBusy" class="mat-m02">
-                <i class="fa fa-eye" aria-hidden="true"></i> View
-              </button>
+      <div *ngIf="selectedElementCellSet !== null" class="m-16 mb-150">
+        <ul class="timeline">
+          <li class="tl-header">
+            <div class="btn white">
+              {{ history.Name }}
             </div>
-          </td>
-        </ng-container>
+          </li>
+          <li class="tl-item" *ngFor="let cell of selectedElementCellSet">
+            <div class="tl-wrap b-primary">
+              <span class="tl-date text-muted">{{ cell.CreatedOn | amTimeAgo }}</span>
+              <div class="tl-content box-color text-color box-shadow p-a-sm">
+                <span class="arrow b-white left pull-top"></span>
+                {{ cell.StringValue }}
+              </div>
+            </div>
+          </li>
+          <li class="tl-header">
+            <div class="btn btn-sm white btn-rounded">History Timeline</div>
+          </li>
+        </ul>
+      </div>
 
-        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="selection.toggle(row)"></tr>
-      </table>
-    </mat-card>
-  </div>
+    </mat-tab>
+  </mat-tab-group>
+
+</div>

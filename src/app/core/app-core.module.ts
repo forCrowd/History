@@ -47,7 +47,7 @@ const appCoreRoutes: Routes = [
   { path: "app/ex", component: ExComponent }, // TODO: Remove! Only here to test appErrorHandler on production
 
   // Users
-  { path: "users/:username", component: ProfileComponent, resolve: { title: DynamicTitleResolve } },
+  { path: ":username", component: ProfileComponent, resolve: { title: DynamicTitleResolve } },
 ];
 
 const coreConfig: ICoreConfig = {

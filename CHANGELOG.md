@@ -6,6 +6,7 @@
 * History item edit and remove feature has been added
 * New timeline adding feature
 * Selected timeline remove feature has been added
+* Profile page is added
 
 **0.1.0**
 
