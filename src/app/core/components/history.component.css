@@ -389,3 +389,11 @@ div i {
   div i:hover {
     color: red;
   }
+  div a i {
+    display: none;
+    text-align: left;
+  }
+  div a:hover i {
+    display: block;
+    color: blue;
+  }
