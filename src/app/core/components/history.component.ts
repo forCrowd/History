@@ -10,6 +10,7 @@ import { ConfirmEditComponent } from "./confirm-edit.component";
 
 // Service
 import { AppProjectService } from "../app-core.module";
+import { ProfileRemoveProjectComponent } from './profile-remove-project.component';
 
 @Component({
   selector: "history",
@@ -178,14 +179,9 @@ export class HistoryComponent implements OnInit {
 
     this.projectService.saveChanges().subscribe(() => {
       this.selectedTab.setValue(this.project.ElementSet.length + 1);
+      this.entry = "";
       this.isBusy = false;
     });
-  }
-
-  editTimelineHeader(element: Element): void {
-    this.notificationService.notification.next("Please write new timeline name form to input then submit");
-    this.changeElementName = true;
-    this.entry =this.selectedElement.Name;
   }
 
   // Change timeline item value
@@ -209,6 +205,35 @@ export class HistoryComponent implements OnInit {
       });
     });
 
+  }
+
+  // Delete Timeline (history)
+  deleteTimeline(element: Element): void {
+
+    const dialogRef = this.dialog.open(ProfileRemoveProjectComponent);
+
+    dialogRef.afterClosed().subscribe(confirmed => {
+
+      if (!confirmed) {
+        return;
+      }
+
+      this.projectService.removeElement(element);
+      this.projectService.saveChanges().pipe(
+        finalize(()=> {
+          this.selectTimeline(0);
+          this.selectedTab.setValue(0);
+          this.notificationService.notification.next("Your timeline has been removed!");
+        })
+      ).subscribe();
+    });
+  }
+
+  // Edit Timeline Header (Chane element name)
+  editTimelineHeader(element: Element): void {
+    this.notificationService.notification.next("Please write new timeline name form to input then submit");
+    this.changeElementName = true;
+    this.entry =this.selectedElement.Name;
   }
 
   // Edit item

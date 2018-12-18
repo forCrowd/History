@@ -5,6 +5,7 @@
 * History Timeline has been added
 * History item edit and remove feature has been added
 * New timeline adding feature
+* Selected timeline remove feature has been added
 
 **0.1.0**
 
