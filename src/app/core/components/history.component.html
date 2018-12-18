@@ -12,11 +12,11 @@
       <button mat-flat-button (click)="createHistroyContent()" [disabled]="historyForm.form.invalid || isBusy">
         Submit
       </button>
-      <button mat-flat-button class="other" (click)="createNewHistroy()" [disabled]="historyForm.form.invalid || isBusy">
-        Create New History
-      </button>
-      <button mat-flat-button class="other" *ngIf="selectedElementCell !== null" (click)="cancelEditing()" color="warn" [disabled]="historyForm.form.invalid || isBusy">
+      <button mat-flat-button class="other" *ngIf="selectedElementCell !== null || changeElementName" (click)="cancelEditing()" color="warn" [disabled]="historyForm.form.invalid || isBusy">
         Cancel editing!
+      </button>
+      <button mat-flat-button class="other" *ngIf="!changeElementName" (click)="createNewHistroy()" [disabled]="historyForm.form.invalid || isBusy">
+        Create New History
       </button>
     </div>
   </form>
@@ -27,7 +27,7 @@
       <div *ngIf="selectedElementCellSet !== null" class="m-16 mb-150">
         <ul class="timeline">
           <li class="tl-header">
-            <div class="btn white">{{ history.Name }}</div>
+            <div class="btn white"><a (click)="editTimelineHeader(history)">{{ history.Name }}</a></div>
           </li>
           <li class="tl-item" *ngFor="let cell of selectedElementCellSet">
             <div class="tl-wrap b-primary">

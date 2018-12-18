@@ -1,7 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { FormControl } from "@angular/forms";
 import { MatDialog } from "@angular/material";
-import { Project, AuthService, ProjectService, Element, ElementItem, ElementField, ElementCell } from "@forcrowd/backbone-client-core";
+import { Project, AuthService, ProjectService, Element, ElementItem, ElementField, ElementCell, NotificationService } from "@forcrowd/backbone-client-core";
 import { finalize } from "rxjs/operators";
 
 // Component
@@ -19,6 +19,7 @@ import { AppProjectService } from "../app-core.module";
 export class HistoryComponent implements OnInit {
 
   entry: string = "";
+  changeElementName: boolean = false;
   isBusy: boolean;
   project: Project = null;
   selectedTab = new FormControl(0);
@@ -78,6 +79,7 @@ export class HistoryComponent implements OnInit {
 
   constructor(private authService: AuthService,
     private projectService: ProjectService,
+    private notificationService: NotificationService,
     private dialog: MatDialog) {
   }
 
@@ -85,6 +87,7 @@ export class HistoryComponent implements OnInit {
     this.entry = "";
     this.selectedElementCell = null;
     this.isBusy = false;
+    this.changeElementName = false;
   }
 
   // Create project (only one time)
@@ -99,34 +102,47 @@ export class HistoryComponent implements OnInit {
 
   // Create a new entry in timeline
   createHistroyContent(): void {
+
     if (!this.currentUser || !this.currentUser.isAuthenticated()) return;
+
     this.isBusy = true;
 
-    if (this.selectedElementCell === null) {
+    if (!this.changeElementName) {
+      if (this.selectedElementCell === null) {
 
-      // New Item
-      const elementItem = this.projectService.createElementItem({
-        Element: this.selectedElement,
-        Name: `History ${this.selectedElement.ElementItemSet.length + 1}`,
-      }) as ElementItem;
+        // New Item
+        const elementItem = this.projectService.createElementItem({
+          Element: this.selectedElement,
+          Name: `History ${this.selectedElement.ElementItemSet.length + 1}`,
+        }) as ElementItem;
 
-      // Cell
-      this.projectService.createElementCell({
-        ElementField: this.selectedElementField,
-        ElementItem: elementItem,
-        StringValue: this.entry,
-      });
+        // Cell
+        this.projectService.createElementCell({
+          ElementField: this.selectedElementField,
+          ElementItem: elementItem,
+          StringValue: this.entry,
+        });
 
+        this.projectService.saveChanges().subscribe(() => {
+          this.entry = "";
+          this.loadProject(this.project.Id);
+          this.isBusy = false;
+        });
+
+      } else {
+        this.selectedElementCell.StringValue !== this.entry ? this.change()
+          : this.isBusy = false;
+      }
+    } else {
+      // if timeline name will be change then
+      this.selectedElement.Name = this.entry;
       this.projectService.saveChanges().subscribe(() => {
         this.entry = "";
-        this.loadProject(this.project.Id);
         this.isBusy = false;
       });
-
-    } else {
-      this.selectedElementCell.StringValue !== this.entry ? this.change()
-        : this.isBusy = false;
+      this.changeElementName = false;
     }
+
   }
 
   // Create a new History Timeline
@@ -166,6 +182,12 @@ export class HistoryComponent implements OnInit {
     });
   }
 
+  editTimelineHeader(element: Element): void {
+    this.notificationService.notification.next("Please write new timeline name form to input then submit");
+    this.changeElementName = true;
+    this.entry =this.selectedElement.Name;
+  }
+
   // Change timeline item value
   change(): void {
     // change cell string value
@@ -179,6 +201,7 @@ export class HistoryComponent implements OnInit {
 
       this.selectedElementCell.StringValue = this.entry;
       this.projectService.saveChanges().subscribe(() => {
+        this.notificationService.notification.next("Timeline item has been change");
         this.selectedElementCell = null;
         this.entry = "";
         this.loadProject(this.project.Id);
