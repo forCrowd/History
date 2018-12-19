@@ -7,7 +7,7 @@
 * New timeline adding feature
 * Selected timeline remove feature has been added
 * Profile page is added
-
+* Timeline items like-dislike feature has been added
 **0.1.0**
 
 * Initial commit
