@@ -15,6 +15,7 @@ export class ProfileComponent implements OnInit {
   selectedTimeline: number = 0;
   username: string = null;
   timeline: string = null;
+  isBusy: boolean;
 
   get selectedElement(): Element {
     return this.fields.selectedElement;
@@ -52,20 +53,39 @@ export class ProfileComponent implements OnInit {
     }
   }
 
+  get selectedElementLikeCountSet(): ElementCell[] {
+    return this.fields.selectedElementLikeCountSet;
+  }
+  set selectedElementLikeCountSet(value: ElementCell[]) {
+    if (this.fields.selectedElementLikeCountSet !== value) {
+      this.fields.selectedElementLikeCountSet = value;
+    }
+  }
+
   private fields: {
     selectedElement: Element,
     selectedElementField: ElementField,
     selectedElementCellSet: ElementCell[],
     selectedCell: ElementCell,
+    selectedElementLikeCountSet: ElementCell[]
   } = {
       selectedElement: null,
       selectedElementField: null,
       selectedElementCellSet: null,
-      selectedCell: null
+      selectedCell: null,
+      selectedElementLikeCountSet: null
     }
 
   constructor(private activatedRoute: ActivatedRoute,
     private projectService: ProjectService) {
+  }
+
+  changeLikeCount(value: number, index: number): void {
+    this.isBusy = true;
+    this.selectedElementLikeCountSet[index].UserElementCellSet[0].DecimalValue += value;
+    this.projectService.saveChanges().subscribe(()=> {
+      this.isBusy = false;
+    });
   }
 
   // Set selected timeline element
@@ -73,6 +93,7 @@ export class ProfileComponent implements OnInit {
     this.selectedTimeline = value;
     this.selectedElement = this.project.ElementSet[value];
     this.selectedElementField = this.selectedElement.ElementFieldSet[0];
+    this.selectedElementLikeCountSet = this.selectedElement.ElementFieldSet[1].ElementCellSet; // for Like - Dislike
     this.selectedElementCellSet = this.selectedElementField.ElementCellSet as ElementCell[];
     this.selectedElementCellSet = this.selectedElementCellSet.sort((a, b) => (b.CreatedOn.getTime() - a.CreatedOn.getTime()));
   }
@@ -102,6 +123,7 @@ export class ProfileComponent implements OnInit {
 
         this.selectedElementField = this.selectedElement.ElementFieldSet[0];
         this.selectedElementCellSet = this.selectedElementField.ElementCellSet as ElementCell[];
+        this.selectedElementLikeCountSet = this.selectedElement.ElementFieldSet[1].ElementCellSet.sort((a, b) => (b.CreatedOn.getTime() - a.CreatedOn.getTime()));
         this.selectedElementCellSet = this.selectedElementCellSet.sort((a, b) => (b.CreatedOn.getTime() - a.CreatedOn.getTime()));
       });
   }
