@@ -2,12 +2,13 @@
 
 **0.1.1**
 
-* History Timeline has been added
-* History item edit and remove feature has been added
-* New timeline adding feature
-* Selected timeline remove feature has been added
-* Profile page is added
-* Timeline items like-dislike feature has been added
+* Create automatic history app project (If you don't have)
+* Create multible History timeline add and remove feature is added
+* History item edit, change and remove feature is added
+* Selected timeline remove feature is added
+* Profile page has been added
+* Timeline items like-dislike feature is added
+
 **0.1.0**
 
 * Initial commit
