@@ -83,7 +83,7 @@ export class ProfileComponent implements OnInit {
   changeLikeCount(value: number, index: number): void {
     this.isBusy = true;
     this.selectedElementLikeCountSet[index].UserElementCellSet[0].DecimalValue += value;
-    this.projectService.saveChanges().subscribe(()=> {
+    this.projectService.saveChanges().subscribe(() => {
       this.isBusy = false;
     });
   }
@@ -142,7 +142,7 @@ export class ProfileComponent implements OnInit {
           if (project.Name === "History App") {
             // Project History
             this.project = project;
-            this.loadProject(this.project.Id)
+            this.loadProject(this.project.Id);
             return;
           }
 

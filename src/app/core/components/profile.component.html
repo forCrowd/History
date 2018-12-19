@@ -14,21 +14,6 @@
               {{ history.Name }}
             </div>
           </li>
-<!--           <li class="tl-item" *ngFor="let cell of selectedElementCellSet">
-            <div class="tl-wrap b-primary">
-              <span class="tl-date text-muted">{{ cell.CreatedOn | amTimeAgo }}</span>
-              <div class="tl-content box-color text-color w-xl w-auto-xs">
-                <span class="arrow b-white left pull-top"></span>
-                <div class="text-lt p-x m-b-sm">
-                  {{ cell.StringValue }}
-                </div>
-                <div class="p-a b-t b-light">
-
-                  Like - Dislike
-                </div>
-              </div>
-            </div>
-          </li> -->
 
           <li class="tl-item" *ngFor="let cell of selectedElementCellSet; let i = index">
             <div class="tl-wrap b-primary">
@@ -50,7 +35,6 @@
             </div>
           </li>
 
-
           <li class="tl-header">
             <div class="btn btn-sm white btn-rounded">History Timeline</div>
           </li>
@@ -67,15 +51,6 @@
           {{ selectedElement?.Name }}
         </div>
       </li>
-<!--       <li class="tl-item" *ngFor="let cell of selectedElementCellSet">
-        <div class="tl-wrap b-primary">
-          <span class="tl-date text-muted">{{ cell.CreatedOn | amTimeAgo }}</span>
-          <div class="tl-content box-color text-color box-shadow p-a-sm">
-            <span class="arrow b-white left pull-top"></span>
-            {{ cell.StringValue }}
-          </div>
-        </div>
-      </li> -->
 
       <li class="tl-item" *ngFor="let cell of selectedElementCellSet; let i = index">
         <div class="tl-wrap b-primary">
@@ -96,7 +71,6 @@
           </div>
         </div>
       </li>
-
 
       <li class="tl-header">
         <div class="btn btn-sm white btn-rounded">History Timeline</div>

@@ -7,12 +7,14 @@
   <form #historyForm="ngForm" autocomplete="off">
     <div class="m-16">
       <mat-form-field>
-        <input matInput id="entry" name="entry" type="text" placeholder="Write something or Write new timeline name" [(ngModel)]="entry" class="form-control" required />
+        <input matInput id="entry" name="entry" type="text" placeholder="Write something or Write new timeline name"
+          [(ngModel)]="entry" class="form-control" required />
       </mat-form-field>
       <button mat-flat-button *ngIf="project?.ElementSet?.length > 0" (click)="createHistroyContent()" [disabled]="historyForm.form.invalid || isBusy">
         Submit
       </button>
-      <button mat-flat-button class="other" *ngIf="selectedElementCell !== null || changeElementName" (click)="cancelEditing()" color="warn" [disabled]="historyForm.form.invalid || isBusy">
+      <button mat-flat-button class="other" *ngIf="selectedElementCell !== null || changeElementName" (click)="cancelEditing()"
+        color="warn" [disabled]="historyForm.form.invalid || isBusy">
         Cancel editing!
       </button>
       <button mat-flat-button class="other" *ngIf="!changeElementName" (click)="createNewHistroy()" [disabled]="historyForm.form.invalid || isBusy">
@@ -20,7 +22,7 @@
       </button>
     </div>
   </form>
-<br>
+  <br>
   <mat-tab-group *ngIf="project !== null" (selectedIndexChange)="selectTimeline($event)" [selectedIndex]="selectedTab.value">
     <mat-tab *ngFor="let history of project.ElementSet" label="{{ history.Name }}">
 
@@ -69,4 +71,3 @@
   </mat-tab-group>
 
 </div>
-

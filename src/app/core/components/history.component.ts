@@ -140,9 +140,9 @@ export class HistoryComponent implements OnInit {
         // Item
         const likeItem = this.projectService.createElementItem({
           Element: this.selectedElement,
-          Name: `likes ${ this.selectedElement.ElementFieldSet[1].ElementCellSet.length + 1 }`
+          Name: `likes ${this.selectedElement.ElementFieldSet[1].ElementCellSet.length + 1}`
         }) as ElementItem;
-        console.log("field ",this.selectedElement.ElementFieldSet[1]);
+        console.log("field ", this.selectedElement.ElementFieldSet[1]);
         // Cell
         const likeCell = this.projectService.createElementCell({
           ElementField: this.selectedElement.ElementFieldSet[1],
@@ -274,7 +274,7 @@ export class HistoryComponent implements OnInit {
       this.projectService.removeElement(element);
       this.projectService.saveChanges().pipe(
         finalize(() => {
-          if (this.project.ElementSet.length > 0 ) {
+          if (this.project.ElementSet.length > 0) {
             this.selectTimeline(0);
             this.selectedTab.setValue(0);
           }
@@ -332,7 +332,7 @@ export class HistoryComponent implements OnInit {
   changeLikeCount(value: number, index: number): void {
     this.isBusy = true;
     this.selectedElementLikeCountSet[index].UserElementCellSet[0].DecimalValue += value;
-    this.projectService.saveChanges().subscribe(()=> {
+    this.projectService.saveChanges().subscribe(() => {
       this.isBusy = false;
     });
   }
