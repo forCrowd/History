@@ -2,9 +2,11 @@ form {
   display: inline-block;
   width: 100%;
 }
+
 .mat-card {
   max-width: 200px !important;
-  height: 100px !important;
+  width: 200px;
+  height: 110px !important;
   float: left !important;
   margin: 0 5px 0 5px !important;
 }
@@ -12,6 +14,12 @@ form {
 .mat-card-title {
   font-size: 18px;
   padding: 10px;
+}
+
+.mat-tab-body-content {
+  height: 100%;
+  overflow: auto;
+  margin-bottom: 150px !important;
 }
 
 .mat-card-content {
@@ -403,10 +411,6 @@ Timeline
   border-color: #4BC0C0;
 }
 
-.mb-150 {
-  margin-bottom: 150px !important;
-}
-
 div i {
   float: right;
   padding: 2px 4px 0 8px;
@@ -497,4 +501,12 @@ div i {
 .m-16 {
   margin: 16px !important;
   width: 100%;
+}
+
+.d-g {
+  display: grid;
+}
+
+.mb-150 {
+  margin-bottom: 150px !important;
 }

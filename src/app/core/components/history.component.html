@@ -5,7 +5,7 @@
 </div>
 
 <div class="m-16" *ngIf="project?.ElementSet">
-  <mat-card *ngFor="let timeline of project.ElementSet" style="width: 200px; height: 100px;">
+  <mat-card *ngFor="let timeline of project.ElementSet">
       <mat-card-title>
         {{ timeline.Name }}
       </mat-card-title>
@@ -34,7 +34,7 @@
   </form>
 </div>
 
-<div class="m-16" style="display: grid">
+<div class="m-16 d-g">
   <mat-tab-group *ngIf="project !== null" (selectedIndexChange)="selectTimeline($event)" [selectedIndex]="selectedTab.value">
     <mat-tab *ngFor="let history of project.ElementSet" label="{{ history.Name }}">
 
