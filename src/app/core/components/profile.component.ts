@@ -1,7 +1,7 @@
 import { Component, OnInit } from "@angular/core";
+import { ActivatedRoute } from "@angular/router";
 import { FormControl } from "@angular/forms";
 import { Project, ProjectService, Element, ElementField, ElementCell } from "@forcrowd/backbone-client-core";
-import { ActivatedRoute } from "@angular/router";
 
 @Component({
   selector: "profile",

@@ -7,17 +7,6 @@
       </mat-list-item>
     </mat-nav-list>
 
-    <mat-list role="list">
-
-      <mat-list-item class="list pt-20" role="listitem" fxLayoutAlign="center center">
-        <button mat-flat-button class="new-project-btn w-160" routerLink="/projects/new">
-          <i class="material-icons">add</i>
-          New Project
-        </button>
-      </mat-list-item>
-
-    </mat-list>
-
     <mat-list role="list" fxLayout="column" fxLayoutAlign="start start">
 
       <mat-list-item class="list" role="listitem" [hidden]="!currentUser.isAuthenticated()" fxLayoutAlign="center center">

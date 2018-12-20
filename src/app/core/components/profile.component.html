@@ -3,7 +3,19 @@
     {{ username | titlecase }}`s Timeline
   </h1>
 </div>
-<div class="m-16">
+
+<div class="m-16" *ngIf="project?.ElementSet">
+  <mat-card (click)="selectTimeline(i)" *ngFor="let timeline of project.ElementSet; let i = index">
+      <mat-card-title>
+       {{ timeline.Name }}
+      </mat-card-title>
+      <mat-card-content>
+        {{ timeline?.ElementItemSet?.length / 2 }}
+      </mat-card-content>
+  </mat-card>
+</div>
+
+<div class="m-16 d-g">
   <mat-tab-group *ngIf="timeline === null" (selectedIndexChange)="selectTimeline($event)" [selectedIndex]="selectedTab.value">
     <mat-tab *ngFor="let history of project.ElementSet" label="{{ history.Name }}">
 

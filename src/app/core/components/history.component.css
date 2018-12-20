@@ -1,3 +1,29 @@
+form {
+  display: inline-block;
+  width: 100%;
+}
+.mat-card {
+  max-width: 200px !important;
+  height: 100px !important;
+  float: left !important;
+  margin: 0 5px 0 5px !important;
+}
+
+.mat-card-title {
+  font-size: 18px;
+  padding: 10px;
+}
+
+.mat-card-content {
+  font-size: 36px;
+  text-align: center;
+  color: #1c7d4f;
+}
+
+.mat-tab-group {
+  display: inline-block !important;
+}
+
 .btn {
   display: inline-block;
   font-weight: 400;
@@ -20,7 +46,7 @@
 }
 
 .btn.white, .btn.btn-default, .btn.btn-secondary {
-  border-color: rgba(120, 130, 140, 0.13);
+  border-color: #58b287;
 }
 
 .box-shadow {
@@ -52,7 +78,6 @@
 
 .p-a {
   padding: 10px 2px 0px 10px;
-  /* padding: 1rem; */
 }
 .b-light {
     border-color: #F6FAFB;
@@ -384,7 +409,7 @@ Timeline
 
 div i {
   float: right;
-  padding: 2px 4px 0 16px;
+  padding: 2px 4px 0 8px;
   cursor: pointer;
   color: gray;
 }
@@ -467,4 +492,9 @@ div i {
 
 .tl-wrap:hover :nth-child(3) {
   display: inline-block
+}
+
+.m-16 {
+  margin: 16px !important;
+  width: 100%;
 }

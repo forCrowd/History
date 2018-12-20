@@ -31,7 +31,7 @@ export class AppProjectService extends ProjectService {
     // Item
     const elementItem = super.createElementItem({
       Element: element,
-      Name: "First History Item"
+      Name: "Entry 1"
     }) as ElementItem;
 
     // Cell 1

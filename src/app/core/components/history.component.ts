@@ -125,7 +125,7 @@ export class HistoryComponent implements OnInit {
         // New Item
         const elementItem = this.projectService.createElementItem({
           Element: this.selectedElement,
-          Name: `History ${this.selectedElement.ElementItemSet.length + 1}`,
+          Name: `Entry ${this.selectedElement.ElementItemSet.length + 1}`,
         }) as ElementItem;
 
         // Cell
@@ -143,6 +143,7 @@ export class HistoryComponent implements OnInit {
           Name: `likes ${this.selectedElement.ElementFieldSet[1].ElementCellSet.length + 1}`
         }) as ElementItem;
         console.log("field ", this.selectedElement.ElementFieldSet[1]);
+
         // Cell
         const likeCell = this.projectService.createElementCell({
           ElementField: this.selectedElement.ElementFieldSet[1],
@@ -251,8 +252,8 @@ export class HistoryComponent implements OnInit {
       this.selectedElementCell.StringValue = this.entry;
       this.projectService.saveChanges().subscribe(() => {
         this.notificationService.notification.next("Timeline item has been change");
-        this.selectedElementCell = null;
         this.entry = "";
+        this.selectedElementCell = null;
         this.loadProject(this.project.Id);
         this.isBusy = false;
       });
@@ -279,8 +280,7 @@ export class HistoryComponent implements OnInit {
             this.selectedTab.setValue(0);
           }
           this.notificationService.notification.next("Your timeline has been removed!");
-        })
-      ).subscribe();
+        })).subscribe();
     });
   }
 
@@ -316,8 +316,8 @@ export class HistoryComponent implements OnInit {
           // ElementField
           this.selectedElementField = this.selectedElement.ElementFieldSet[0];
 
-          // ElementLikeCountSet (ElementCellSet)
           // for Like - Dislike
+          // ElementLikeCountSet (ElementCellSet)
           this.selectedElementLikeCountSet = this.selectedElement.ElementFieldSet[1].ElementCellSet.sort((a, b) => (b.CreatedOn.getTime() - a.CreatedOn.getTime()));
 
           // ElementCellSet
@@ -357,7 +357,11 @@ export class HistoryComponent implements OnInit {
 
       if (!confirmed) return;
 
+      var likeItemIndex =  this.selectedElement.ElementItemSet.indexOf(elementItem);
+
       this.projectService.removeElementItem(elementItem);
+      this.projectService.removeElementItem(this.selectedElement.ElementItemSet[likeItemIndex]);
+
       this.projectService.saveChanges().pipe(
         finalize(() => {
           this.entry = "";
