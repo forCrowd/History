@@ -8,10 +8,10 @@ export const settings = {
   /*
    * Service application API url
    */
-  serviceApiUrl: "http://localhost:15001/api/v1",
+  serviceApiUrl: "https://api.backbone.forcrowd.org/api/v1",
 
   /*
    * Service application OData url
    */
-  serviceODataUrl: "http://localhost:15001/odata/v1",
+  serviceODataUrl: "https://api.backbone.forcrowd.org/odata/v1",
 };

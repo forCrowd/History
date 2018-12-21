@@ -2,19 +2,24 @@ form {
   display: inline-block;
   width: 100%;
 }
+
 .mat-card {
-  width: 200px;
   max-width: 200px !important;
-  height: 100px !important;
+  width: 200px;
+  height: 110px !important;
   float: left !important;
   margin: 0 5px 0 5px !important;
-  padding-bottom: 10px;
-  cursor: pointer;
 }
 
 .mat-card-title {
   font-size: 18px;
   padding: 10px;
+}
+
+.mat-tab-body-content {
+  height: 100%;
+  overflow: auto;
+  margin-bottom: 150px !important;
 }
 
 .mat-card-content {
@@ -49,7 +54,7 @@ form {
 }
 
 .btn.white, .btn.btn-default, .btn.btn-secondary {
-  border-color: rgba(120, 130, 140, 0.13);
+  border-color: #58b287;
 }
 
 .box-shadow {
@@ -61,6 +66,7 @@ form {
   color: inherit !important;
   opacity: 0.6;
 }
+
 
 .b-success {
   border-color: #22b66e;
@@ -79,7 +85,7 @@ form {
 }
 
 .p-a {
-    padding: 1rem;
+  padding: 10px 2px 0px 10px;
 }
 .b-light {
     border-color: #F6FAFB;
@@ -92,6 +98,7 @@ form {
 .tl-content {
   display: inline-block;
   position: relative;
+  cursor: pointer;
   padding-top: 10px;
   padding-bottom: 10px;
 }
@@ -404,13 +411,9 @@ Timeline
   border-color: #4BC0C0;
 }
 
-.mb-150 {
-  margin-bottom: 150px !important;
-}
-
 div i {
   float: right;
-  padding: 2px 4px 0 16px;
+  padding: 2px 4px 0 8px;
   cursor: pointer;
   color: gray;
 }
@@ -502,4 +505,8 @@ div i {
 
 .d-g {
   display: grid;
+}
+
+.mb-150 {
+  margin-bottom: 150px !important;
 }

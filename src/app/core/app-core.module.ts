@@ -17,12 +17,15 @@ import { LandingPageComponent } from "./components/landing-page.component";
 import { ProfileComponent } from "./components/profile.component";
 import { ProfileRemoveProjectComponent } from "./components/profile-remove-project.component";
 import { SearchComponent } from "./components/search.component";
+import { HistoryComponent } from "./components/history.component";
+import { ConfirmEditComponent } from "./components/confirm-edit.component";
 
 // Services
 import { AppProjectService } from "./app-project.service";
 import { AuthGuard } from "./auth-guard.service";
 import { CanDeactivateGuard } from "./can-deactivate-guard.service";
 import { DynamicTitleResolve } from "./dynamic-title-resolve.service";
+import { RemoveHistoryConfirmComponent } from "./components/remove-history.component";
 
 export { AppProjectService, AuthGuard, CanDeactivateGuard, DynamicTitleResolve }
 
@@ -44,7 +47,8 @@ const appCoreRoutes: Routes = [
   { path: "app/ex", component: ExComponent }, // TODO: Remove! Only here to test appErrorHandler on production
 
   // Users
-  { path: "users/:username", component: ProfileComponent, resolve: { title: DynamicTitleResolve } },
+  { path: ":username/:timeline", component: ProfileComponent, resolve: { title: DynamicTitleResolve } },
+  { path: ":username", component: ProfileComponent, resolve: { title: DynamicTitleResolve } },
 ];
 
 const coreConfig: ICoreConfig = {
@@ -63,9 +67,14 @@ const coreConfig: ICoreConfig = {
     ProfileComponent,
     ProfileRemoveProjectComponent,
     SearchComponent,
+    HistoryComponent,
+    RemoveHistoryConfirmComponent,
+    ConfirmEditComponent,
   ],
   entryComponents: [
-    ProfileRemoveProjectComponent
+    ProfileRemoveProjectComponent,
+    RemoveHistoryConfirmComponent,
+    ConfirmEditComponent
   ],
   exports: [
     RouterModule,
