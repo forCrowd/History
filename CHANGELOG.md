@@ -1,5 +1,10 @@
 ### Changelog
 
+**0.1.2**
+
+* Profile and history-overview pages is added
+* Create automatic history project and user, Minor fix and update
+
 **0.1.1**
 
 * Create automatic history app project (If you don't have)

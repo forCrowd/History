@@ -18,14 +18,14 @@ import { ProfileComponent } from "./components/profile.component";
 import { ProfileRemoveProjectComponent } from "./components/profile-remove-project.component";
 import { SearchComponent } from "./components/search.component";
 import { HistoryComponent } from "./components/history.component";
-import { ConfirmEditComponent } from "./components/confirm-edit.component";
+import { RemoveHistoryConfirmComponent } from "./components/remove-history.component";
+import { HistoryOverviewComponent } from "./components/history-overview.component";
 
 // Services
 import { AppProjectService } from "./app-project.service";
 import { AuthGuard } from "./auth-guard.service";
 import { CanDeactivateGuard } from "./can-deactivate-guard.service";
 import { DynamicTitleResolve } from "./dynamic-title-resolve.service";
-import { RemoveHistoryConfirmComponent } from "./components/remove-history.component";
 
 export { AppProjectService, AuthGuard, CanDeactivateGuard, DynamicTitleResolve }
 
@@ -43,12 +43,17 @@ const appCoreRoutes: Routes = [
   { path: "", component: LandingPageComponent, data: { title: "Home" } },
   { path: "app/home", redirectTo: "", pathMatch: "full" },
   { path: "app/contributors", component: ContributorsComponent, data: { title: "Contributors" } },
+  { path: "app/getting-started", component: ProfileComponent, data: { title: "Getting Started" } },
   { path: "app/search", component: SearchComponent, data: { title: "Search" } },
   { path: "app/ex", component: ExComponent }, // TODO: Remove! Only here to test appErrorHandler on production
 
+  { path: "history/:timeline-name", component: HistoryOverviewComponent, canActivate: [AuthGuard], canDeactivate: [CanDeactivateGuard], resolve: { title: DynamicTitleResolve } },
+
   // Users
-  { path: ":username/:timeline", component: ProfileComponent, resolve: { title: DynamicTitleResolve } },
-  { path: ":username", component: ProfileComponent, resolve: { title: DynamicTitleResolve } },
+  { path: "users/:username", component: HistoryComponent, resolve: { title: DynamicTitleResolve }, children: [
+    { path: ":timeline", component: HistoryComponent, resolve: { title: DynamicTitleResolve }, },
+  ]},
+
 ];
 
 const coreConfig: ICoreConfig = {
@@ -68,13 +73,12 @@ const coreConfig: ICoreConfig = {
     ProfileRemoveProjectComponent,
     SearchComponent,
     HistoryComponent,
+    HistoryOverviewComponent,
     RemoveHistoryConfirmComponent,
-    ConfirmEditComponent,
   ],
   entryComponents: [
     ProfileRemoveProjectComponent,
     RemoveHistoryConfirmComponent,
-    ConfirmEditComponent
   ],
   exports: [
     RouterModule,

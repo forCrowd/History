@@ -1,7 +1,13 @@
 import { Component, OnInit } from "@angular/core";
-import { ActivatedRoute } from "@angular/router";
 import { FormControl } from "@angular/forms";
-import { Project, ProjectService, Element, ElementField, ElementCell } from "@forcrowd/backbone-client-core";
+import { MatDialog, MatTableDataSource } from "@angular/material";
+import { SelectionModel } from "@angular/cdk/collections";
+import { Project, AuthService, ProjectService, Element, ElementItem, ElementField, ElementCell, NotificationService, ElementFieldDataType, User } from "@forcrowd/backbone-client-core";
+import { finalize } from "rxjs/operators";
+
+// Service
+import { AppProjectService } from "../app-core.module";
+import { ProfileRemoveProjectComponent } from './profile-remove-project.component';
 
 @Component({
   selector: "profile",
@@ -10,12 +16,18 @@ import { Project, ProjectService, Element, ElementField, ElementCell } from "@fo
 })
 export class ProfileComponent implements OnInit {
 
-  project: Project = null;
+  displayedColumns = ["select", "name", "items", "createdOn", "functions"];
+  dataSource = new MatTableDataSource<Element>([]);
+  entry: string = "";
+  selection = new SelectionModel<Element>(true, []);
   selectedTab = new FormControl(0);
-  selectedTimeline: number = 0;
-  username: string = null;
-  timeline: string = null;
+  project: Project = null;
+  profileUser: User = null;
   isBusy: boolean;
+
+  get currentUser() {
+    return this.authService.currentUser;
+  }
 
   get selectedElement(): Element {
     return this.fields.selectedElement;
@@ -26,128 +38,176 @@ export class ProfileComponent implements OnInit {
     }
   }
 
-  get selectedElementField(): ElementField {
-    return this.fields.selectedElementField;
-  }
-  set selectedElementField(value: ElementField) {
-    if (this.fields.selectedElementField !== value) {
-      this.fields.selectedElementField = value;
-    }
-  }
-
-  get selectedElementCellSet(): ElementCell[] {
-    return this.fields.selectedElementCellSet;
-  }
-  set selectedElementCellSet(value: ElementCell[]) {
-    if (this.fields.selectedElementCellSet !== value) {
-      this.fields.selectedElementCellSet = value;
-    }
-  }
-
-  get selectedElementCell(): ElementCell {
-    return this.fields.selectedCell;
-  }
-  set selectedElementCell(value: ElementCell) {
-    if (this.fields.selectedCell !== value) {
-      this.fields.selectedCell = value;
-    }
-  }
-
-  get selectedElementLikeCountSet(): ElementCell[] {
-    return this.fields.selectedElementLikeCountSet;
-  }
-  set selectedElementLikeCountSet(value: ElementCell[]) {
-    if (this.fields.selectedElementLikeCountSet !== value) {
-      this.fields.selectedElementLikeCountSet = value;
-    }
-  }
-
   private fields: {
     selectedElement: Element,
-    selectedElementField: ElementField,
-    selectedElementCellSet: ElementCell[],
-    selectedCell: ElementCell,
-    selectedElementLikeCountSet: ElementCell[]
   } = {
       selectedElement: null,
-      selectedElementField: null,
-      selectedElementCellSet: null,
-      selectedCell: null,
-      selectedElementLikeCountSet: null
     }
 
-  constructor(private activatedRoute: ActivatedRoute,
-    private projectService: ProjectService) {
+  constructor(private readonly authService: AuthService,
+    private readonly projectService: ProjectService,
+    private dialog: MatDialog) {
   }
 
-  changeLikeCount(value: number, index: number): void {
+  cancelEditing() {
+    this.entry = "";
+    this.isBusy = false;
+  }
+
+  // Create project (only one time)
+  createProjectHistory(): void {
     this.isBusy = true;
-    this.selectedElementLikeCountSet[index].UserElementCellSet[0].DecimalValue += value;
+    this.project = (this.projectService as AppProjectService).createProjectHistory();
+
     this.projectService.saveChanges().subscribe(() => {
+      this.loadProject(this.project.Id);
       this.isBusy = false;
     });
   }
 
-  // Set selected timeline element
-  selectTimeline(value: number): void {
-    this.selectedTimeline = value;
-    this.selectedElement = this.project.ElementSet[value];
-    this.selectedElementField = this.selectedElement.ElementFieldSet[0];
-    this.selectedElementLikeCountSet = this.selectedElement.ElementFieldSet[1].ElementCellSet; // for Like - Dislike
-    this.selectedElementCellSet = this.selectedElementField.ElementCellSet as ElementCell[];
-    this.selectedElementCellSet = this.selectedElementCellSet.sort((a, b) => (b.CreatedOn.getTime() - a.CreatedOn.getTime()));
+  // Create a new History Timeline
+  createNewHistroyTimeline(): void {
+
+    // New Timeline Element
+    const element = this.projectService.createElement({
+      Project: this.project,
+      Name: this.entry
+    }) as Element;
+
+    // Field
+    const elementField = this.projectService.createElementField({
+      Element: element,
+      Name: this.entry,
+      DataType: ElementFieldDataType.String,
+      SortOrder: 1
+    }) as ElementField;
+
+    // Item
+    const elementItem = this.projectService.createElementItem({
+      Element: element,
+      Name: this.entry
+    }) as ElementItem;
+
+    // Cell
+    this.projectService.createElementCell({
+      ElementField: elementField,
+      ElementItem: elementItem,
+      StringValue: "First",
+    });
+
+    // Like Dislikes Count
+    const elementField2 = this.projectService.createElementField({
+      Element: element,
+      Name: "likes",
+      DataType: ElementFieldDataType.Decimal,
+      UseFixedValue: false,
+      RatingEnabled: false,
+      SortOrder: 0
+    }) as ElementField;
+
+    // Item
+    const elementItem2 = this.projectService.createElementItem({
+      Element: element,
+      Name: "likes"
+    }) as ElementItem;
+
+    // Cell
+    const cell2 = this.projectService.createElementCell({
+      ElementField: elementField2,
+      ElementItem: elementItem2
+    });
+
+    this.projectService.createUserElementCell(cell2, 0);
+
+    this.projectService.saveChanges().subscribe(() => {
+      this.selectedTab.setValue(this.project.ElementSet.length + 1);
+      this.entry = "";
+      this.isBusy = false;
+    });
+
+    this.dataSource.data = this.project.ElementSet;
   }
 
+  // Delete Timeline (history)
+  deleteSelectedTimeline(element: Element): void {
+
+    const dialogRef = this.dialog.open(ProfileRemoveProjectComponent);
+
+    dialogRef.afterClosed().subscribe(confirmed => {
+
+      if (!confirmed) {
+        return;
+      }
+
+      if (this.selection.selected.length > 0) {
+
+        this.selection.selected.forEach(element => {
+          this.projectService.removeElement(element);
+        });
+
+        this.selection.clear();
+
+        this.projectService.saveChanges().pipe(
+          finalize(() => {
+            this.dataSource.data = this.project.ElementSet;
+          })).subscribe();
+      }
+
+    });
+  }
+
+  // Set project element and field
   loadProject(projectId: number) {
-    this.projectService.getProjectExpanded<Project>(projectId)
-      .subscribe(project => {
+    this.projectService.getProjectExpanded<Project>(projectId).subscribe(project => {
 
-        if (!project) {
-          return;
-        }
+      if (!project) return;
 
-        // Project History
-        this.project = project;
-
-        if (this.timeline !== undefined) {
-          for (var i = 0; i < this.project.ElementSet.length; i++) {
-            if (this.timeline === this.project.ElementSet[i].Name) {
-              this.selectTimeline(i);
-              return;
-            }
-          }
-        } else {
-          this.timeline = null;
-          this.selectedElement = this.project.ElementSet[this.selectedTimeline];
-        }
-
-        this.selectedElementField = this.selectedElement.ElementFieldSet[0];
-        this.selectedElementCellSet = this.selectedElementField.ElementCellSet as ElementCell[];
-        this.selectedElementLikeCountSet = this.selectedElement.ElementFieldSet[1].ElementCellSet.sort((a, b) => (b.CreatedOn.getTime() - a.CreatedOn.getTime()));
-        this.selectedElementCellSet = this.selectedElementCellSet.sort((a, b) => (b.CreatedOn.getTime() - a.CreatedOn.getTime()));
-      });
+      // Project History
+      this.project = project;
+      this.dataSource.data = this.project.ElementSet;
+      this.isBusy = false;
+    });
   }
 
   ngOnInit(): void {
 
-    this.username = this.activatedRoute.snapshot.params["username"];
-    this.timeline = this.activatedRoute.snapshot.params["timeline"];
+    if (!this.currentUser || !this.currentUser.isAuthenticated()) {
+      this.createProjectHistory();
+      return;
+    }
 
-    this.projectService.getProjectSet<Project>(this.username)
-      .subscribe(projectSet => {
+    this.authService.getUser(this.currentUser.UserName).subscribe((user) => {
 
-        for (var i = 0; i < projectSet.length; i++) {
-          var project = projectSet[i];
+      this.profileUser = user;
 
-          if (project.Name === "History App") {
-            // Project History
-            this.project = project;
-            this.loadProject(this.project.Id);
-            return;
-          }
+      for (var i = 0; i < this.currentUser.ProjectSet.length; i++) {
 
-        };
-      });
+        var project = this.currentUser.ProjectSet[i];
+
+        if (project.Name === "History App") {
+          this.project = project;
+          this.loadProject(this.project.Id);
+          break;
+        }
+      }
+
+    });
+  }
+
+  isAllSelected() {
+    const numSelected = this.selection.selected.length;
+    const numRows = this.dataSource.data.length;
+    return numSelected === numRows;
+  }
+
+  masterToggle() {
+    this.isAllSelected() ?
+      this.selection.clear() :
+      this.dataSource.data.forEach(row => this.selection.select(row));
+  }
+
+  trackBy(index: number, item: Element) {
+    return item.Id;
   }
 
 }
