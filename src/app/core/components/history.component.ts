@@ -109,13 +109,13 @@ export class HistoryComponent implements OnInit, OnDestroy {
     if (userElementCellSet.UserElementCellSet.length > 0) {
       var currentDecimalValue = userElementCellSet.UserElementCellSet[0].DecimalValue;
       if (currentDecimalValue === 0 || currentDecimalValue !== value) {
-        currentDecimalValue += value;
-        this.projectService.saveChanges().subscribe();
+        userElementCellSet.UserElementCellSet[0].DecimalValue += value;
       }
     } else {
       this.projectService.createUserElementCell(userElementCellSet, value);
-      this.projectService.saveChanges().subscribe();
     }
+
+    this.projectService.saveChanges().subscribe();
   }
 
   // Set selected timeline element

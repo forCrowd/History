@@ -39,9 +39,9 @@
                   <span class="pull-right label" [ngClass]="{'warning': selectedElementLikeCountSet[i]?.UserElementCellSet[0]?.DecimalValue < 0, 'success': selectedElementLikeCountSet[i]?.UserElementCellSet[0]?.DecimalValue > 0 }">
                     {{ decimalValueTotal(i) }}
                   </span>
-                  <i (click)="!this.isBusy ? changeLikeCount(-1, i) : null" class="fa fa-thumbs-down p2406" aria-hidden="true"></i>
+                  <i (click)="changeLikeCount(-1, i)" class="fa fa-thumbs-down p2406" aria-hidden="true"></i>
                   <span class="like">
-                    <i (click)="!this.isBusy ? changeLikeCount(1, i) : null" class="fa fa-thumbs-up p2406" aria-hidden="true"></i>
+                    <i (click)="changeLikeCount(1, i)" class="fa fa-thumbs-up p2406" aria-hidden="true"></i>
                   </span>
                 </div>
               </div>
