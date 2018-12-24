@@ -97,25 +97,19 @@ export class HistoryComponent implements OnInit, OnDestroy {
   }
 
   decimalValueTotal(index: number): number {
-    var valueTotal = 0;
-    const userElementCellSet = this.selectedElement.ElementFieldSet[1].ElementCellSet[index];
-    userElementCellSet.UserElementCellSet.forEach((cell)=> valueTotal += cell.DecimalValue);
-    return valueTotal;
+    return this.selectedElement.ElementFieldSet[1].ElementCellSet[index].DecimalValueTotal;
   }
 
   changeLikeCount(value: number, index: number): void {
     const userElementCellSet = this.selectedElement.ElementFieldSet[1].ElementCellSet[index];
 
     if (userElementCellSet.UserElementCellSet.length > 0) {
-      var currentDecimalValue = userElementCellSet.UserElementCellSet[0].DecimalValue;
-      if (currentDecimalValue === 0 || currentDecimalValue !== value) {
-        userElementCellSet.UserElementCellSet[0].DecimalValue += value;
-      }
+      userElementCellSet.UserElementCellSet[0].DecimalValue = value;
+      this.projectService.saveChanges().subscribe();
     } else {
       this.projectService.createUserElementCell(userElementCellSet, value);
+      this.projectService.saveChanges().subscribe();
     }
-
-    this.projectService.saveChanges().subscribe();
   }
 
   // Set selected timeline element
