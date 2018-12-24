@@ -81,7 +81,7 @@ export class CoreComponent implements OnDestroy, OnInit {
       mergeMap(route => route.data))
       .subscribe(data => {
         if (data.title) {
-          this.titleService.setTitle(`Backbone - ${data.title}`);
+          this.titleService.setTitle(`forCrowd History - ${data.title}`);
         }
       });
 

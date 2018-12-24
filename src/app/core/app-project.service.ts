@@ -17,7 +17,7 @@ export class AppProjectService extends ProjectService {
     // Element
     const element = super.createElement({
       Project: project,
-      Name: "First Histroy Element"
+      Name: "My First Timeline"
     }) as Element;
 
     // Field
@@ -31,7 +31,7 @@ export class AppProjectService extends ProjectService {
     // Item
     const elementItem = super.createElementItem({
       Element: element,
-      Name: "Entry 1"
+      Name: "Firt Entry"
     }) as ElementItem;
 
     // Cell 1
@@ -40,6 +40,30 @@ export class AppProjectService extends ProjectService {
       ElementItem: elementItem,
       StringValue: "Please edit me"
     });
+
+    // Like Dislikes Count
+    const elementField2 = super.createElementField({
+      Element: element,
+      Name: "likes",
+      DataType: ElementFieldDataType.Decimal,
+      UseFixedValue: false,
+      RatingEnabled: false,
+      SortOrder: 0
+    }) as ElementField;
+
+    // Item
+    const elementItem2 = super.createElementItem({
+      Element: element,
+      Name: "likes"
+    }) as ElementItem;
+
+    // Cell
+    const cell2 = super.createElementCell({
+      ElementField: elementField2,
+      ElementItem: elementItem2
+    });
+
+    super.createUserElementCell(cell2, 0);
 
     return project;
   }

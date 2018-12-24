@@ -1,5 +1,9 @@
 ### Changelog
 
+**0.1.2**
+
+* Create automatic history project and user, Minor fix
+
 **0.1.1**
 
 * Create automatic history app project (If you don't have)

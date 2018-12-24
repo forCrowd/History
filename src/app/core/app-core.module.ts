@@ -43,12 +43,14 @@ const appCoreRoutes: Routes = [
   { path: "", component: LandingPageComponent, data: { title: "Home" } },
   { path: "app/home", redirectTo: "", pathMatch: "full" },
   { path: "app/contributors", component: ContributorsComponent, data: { title: "Contributors" } },
+  { path: "app/getting-started", component: ProfileComponent, data: { title: "Getting Started" } },
   { path: "app/search", component: SearchComponent, data: { title: "Search" } },
   { path: "app/ex", component: ExComponent }, // TODO: Remove! Only here to test appErrorHandler on production
-
   // Users
-  { path: ":username/:timeline", component: ProfileComponent, resolve: { title: DynamicTitleResolve } },
-  { path: ":username", component: ProfileComponent, resolve: { title: DynamicTitleResolve } },
+  { path: "users/:username", component: HistoryComponent, resolve: { title: DynamicTitleResolve }, children: [
+    { path: ":timeline", component: HistoryComponent, resolve: { title: DynamicTitleResolve }, },
+  ]},
+
 ];
 
 const coreConfig: ICoreConfig = {
