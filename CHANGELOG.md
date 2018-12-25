@@ -2,7 +2,8 @@
 
 **0.1.2**
 
-* Create automatic history project and user, Minor fix
+* Profile and history-overview pages is added
+* Create automatic history project and user, Minor fix and update
 
 **0.1.1**
 
