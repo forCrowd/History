@@ -3,6 +3,7 @@
 # Build folders
 [Bb]in/
 [Oo]bj/
+dist/
 
 # NPM packages
 npm-debug.log

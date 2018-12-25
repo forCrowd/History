@@ -9,10 +9,10 @@
       <input matInput id="entry" name="entry" type="text" placeholder="Write new timeline name"
       [(ngModel)]="entry" class="form-control" required />
     </mat-form-field>
-    <button mat-flat-button *ngIf="!changeElementName" (click)="createNewHistroyTimeline()" [disabled]="historyForm.form.invalid || isBusy">
+    <button mat-flat-button (click)="createNewHistroyTimeline()" [disabled]="historyForm.form.invalid || isBusy">
       New Timeline
     </button>
-    <button mat-flat-button *ngIf="selectedElementCell !== null || changeElementName" (click)="cancelEditing()"
+    <button mat-flat-button *ngIf="entry === ''" (click)="cancelEditing()"
       color="warn" [disabled]="historyForm.form.invalid || isBusy">
       Cancel
     </button>
