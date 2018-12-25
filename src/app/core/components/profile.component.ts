@@ -46,7 +46,6 @@ export class ProfileComponent implements OnInit {
 
   constructor(private readonly authService: AuthService,
     private readonly projectService: ProjectService,
-    private notificationService: NotificationService,
     private dialog: MatDialog) {
   }
 

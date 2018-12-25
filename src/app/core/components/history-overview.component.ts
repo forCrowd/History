@@ -92,8 +92,8 @@ export class HistoryOverviewComponent implements OnInit {
       selectedElementLikeCountSet: null
     }
 
-  constructor(private readonly authService: AuthService,
-    private readonly projectService: ProjectService,
+  constructor(private authService: AuthService,
+    private projectService: ProjectService,
     private activatedRoute: ActivatedRoute,
     private notificationService: NotificationService,
     private dialog: MatDialog) {
