@@ -36,7 +36,7 @@
                 </div>
                 <div class="tl-content tl-content-bg-ld box-color text-color box-shadow p-a-sm">
                   <span class="arrow arrow-bg-ld b-white left pull-top"></span>
-                  <span class="pull-right label" [ngClass]="{'warning': selectedElementLikeCountSet[i]?.UserElementCellSet[0]?.DecimalValue < 0, 'success': selectedElementLikeCountSet[i]?.UserElementCellSet[0]?.DecimalValue > 0 }">
+                  <span class="pull-right label" [ngClass]="{'warning': decimalValueTotal(i) < 0, 'success': decimalValueTotal(i) > 0 }">
                     {{ decimalValueTotal(i) }}
                   </span>
                   <i (click)="changeLikeCount(-1, i)" class="fa fa-thumbs-down p2406" aria-hidden="true"></i>
@@ -73,7 +73,7 @@
             </div>
             <div class="tl-content tl-content-bg-ld box-color text-color box-shadow p-a-sm">
               <span class="arrow arrow-bg-ld b-white left pull-top"></span>
-              <span class="pull-right label" [ngClass]="{'warning': selectedElementLikeCountSet[i]?.UserElementCellSet[0]?.DecimalValue < 0, 'success': selectedElementLikeCountSet[i]?.UserElementCellSet[0]?.DecimalValue > 0 }">
+              <span class="pull-right label" [ngClass]="{'warning': decimalValueTotal(i) < 0, 'success': decimalValueTotal(i) > 0 }">
                 {{ selectedElementLikeCountSet[i]?.UserElementCellSet[0]?.DecimalValue }}
               </span>
               <i (click)="!this.isBusy ? changeLikeCount(-1, i) : null" class="fa fa-thumbs-down p2406" aria-hidden="true"></i>

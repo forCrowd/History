@@ -6,7 +6,6 @@ import { finalize } from "rxjs/operators";
 
 // Component
 import { RemoveHistoryConfirmComponent } from "./remove-history.component";
-import { ConfirmEditComponent } from "./confirm-edit.component";
 
 // Service
 import { AppProjectService } from "../app-core.module";
@@ -239,25 +238,14 @@ export class ProfileComponent implements OnInit {
 
   // Change timeline item value
   change(): void {
-    // change cell string value
-    const dialogRef = this.dialog.open(ConfirmEditComponent);
-    dialogRef.afterClosed().subscribe(confirmed => {
-
-      if (!confirmed) {
-        this.cancelEditing();
-        return;
-      }
-
-      this.selectedElementCell.StringValue = this.entry;
-      this.projectService.saveChanges().subscribe(() => {
-        this.notificationService.notification.next("Timeline item has been change");
-        this.entry = "";
-        this.selectedElementCell = null;
-        this.loadProject(this.project.Id);
-        this.isBusy = false;
-      });
+    this.selectedElementCell.StringValue = this.entry;
+    this.projectService.saveChanges().subscribe(() => {
+      this.notificationService.notification.next("Timeline item has been change");
+      this.entry = "";
+      this.selectedElementCell = null;
+      this.loadProject(this.project.Id);
+      this.isBusy = false;
     });
-
   }
 
   // Delete Timeline (history)
@@ -335,13 +323,10 @@ export class ProfileComponent implements OnInit {
   changeLikeCount(value: number, index: number): void {
     const userElementCellSet = this.selectedElement.ElementFieldSet[1].ElementCellSet[index];
 
-    if (userElementCellSet.UserElementCellSet.length > 0) {
-      userElementCellSet.UserElementCellSet[0].DecimalValue = value;
-      this.projectService.saveChanges().subscribe();
-    } else {
-      this.projectService.createUserElementCell(userElementCellSet, value);
-      this.projectService.saveChanges().subscribe();
-    }
+    userElementCellSet.UserElementCellSet.length > 0 ? userElementCellSet.UserElementCellSet[0].DecimalValue = value
+      : this.projectService.createUserElementCell(userElementCellSet, value);
+
+    this.projectService.saveChanges().subscribe();
   }
 
   // Set selected timeline element
@@ -401,7 +386,6 @@ export class ProfileComponent implements OnInit {
         }
       }
 
-      //if (this.project === null) this.createProjectHistory();
     });
   }
 

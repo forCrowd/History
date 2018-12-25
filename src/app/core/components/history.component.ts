@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from "@angular/core";
-import { ActivatedRoute, ParamMap, Router } from "@angular/router";
+import { ActivatedRoute, ParamMap } from "@angular/router";
 import { FormControl } from "@angular/forms";
 import { Project, ProjectService, Element, ElementField, ElementCell, AuthService } from "@forcrowd/backbone-client-core";
 import { Subscription } from 'rxjs';
@@ -17,13 +17,11 @@ export class HistoryComponent implements OnInit, OnDestroy {
   username: string = null;
   timeline: string = null;
   isBusy: boolean;
-
   subscriptions: Subscription[] = [];
 
   get currentUser() {
     return this.authService.currentUser;
   }
-
 
   get selectedElement(): Element {
     return this.fields.selectedElement;
@@ -87,13 +85,13 @@ export class HistoryComponent implements OnInit, OnDestroy {
   constructor(private authService: AuthService,
     private activatedRoute: ActivatedRoute,
     private projectService: ProjectService) {
-      if (activatedRoute.firstChild !== null) {
-        var activatedRouteSubscription =  activatedRoute.firstChild.paramMap.subscribe((params: ParamMap) : void => {
-          this.timeline = params.get( "timeline" );
-          if (this.project !== null) this.loadProject(this.project.Id);
-        });
-        this.subscriptions.push(activatedRouteSubscription);
-      }
+    if (activatedRoute.firstChild !== null) {
+      var activatedRouteSubscription = activatedRoute.firstChild.paramMap.subscribe((params: ParamMap): void => {
+        this.timeline = params.get("timeline");
+        if (this.project !== null) this.loadProject(this.project.Id);
+      });
+      this.subscriptions.push(activatedRouteSubscription);
+    }
   }
 
   decimalValueTotal(index: number): number {
@@ -103,13 +101,10 @@ export class HistoryComponent implements OnInit, OnDestroy {
   changeLikeCount(value: number, index: number): void {
     const userElementCellSet = this.selectedElement.ElementFieldSet[1].ElementCellSet[index];
 
-    if (userElementCellSet.UserElementCellSet.length > 0) {
-      userElementCellSet.UserElementCellSet[0].DecimalValue = value;
-      this.projectService.saveChanges().subscribe();
-    } else {
-      this.projectService.createUserElementCell(userElementCellSet, value);
-      this.projectService.saveChanges().subscribe();
-    }
+    userElementCellSet.UserElementCellSet.length > 0 ? userElementCellSet.UserElementCellSet[0].DecimalValue = value
+      : this.projectService.createUserElementCell(userElementCellSet, value);
+
+    this.projectService.saveChanges().subscribe();
   }
 
   // Set selected timeline element

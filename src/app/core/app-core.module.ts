@@ -18,7 +18,6 @@ import { ProfileComponent } from "./components/profile.component";
 import { ProfileRemoveProjectComponent } from "./components/profile-remove-project.component";
 import { SearchComponent } from "./components/search.component";
 import { HistoryComponent } from "./components/history.component";
-import { ConfirmEditComponent } from "./components/confirm-edit.component";
 
 // Services
 import { AppProjectService } from "./app-project.service";
@@ -71,12 +70,10 @@ const coreConfig: ICoreConfig = {
     SearchComponent,
     HistoryComponent,
     RemoveHistoryConfirmComponent,
-    ConfirmEditComponent,
   ],
   entryComponents: [
     ProfileRemoveProjectComponent,
     RemoveHistoryConfirmComponent,
-    ConfirmEditComponent
   ],
   exports: [
     RouterModule,
