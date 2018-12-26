@@ -1,5 +1,9 @@
 ### Changelog
 
+**0.1.3**
+
+* Minor
+
 **0.1.2**
 
 * Profile and history-overview pages is added

@@ -1,30 +1,14 @@
 ## General rules
 
 # Build folders
-[Bb]in/
-[Oo]bj/
 dist/
 
 # NPM packages
 npm-debug.log
-node_modules
+node_modules/
 
-# NuGet packages
-packages
 
-# Personal database queries (no need to save)
-SolutionItems/Scripts/Database/Personal/
 
-# Publish profiles
-*.pubxml
-
-# User-specific files
-*.suo
-*.user
-
-# Visual Studio
-.vs/
-UpgradeLog.htm
 
 # Others
 .DS_Store
@@ -32,25 +16,8 @@ UpgradeLog.htm
 Thumbs.db
 
 ## Project specific rules
+src/index-*.html
 
-# AngularClient
-AngularClient/dist
-AngularClient/dist-last
-AngularClient/out-tsc
-
-#AngularClient/e2e/*.js
-#AngularClient/e2e/*.map
-
-AngularClient/src/index-*.html
-
-AngularClient/src/settings/*
-!AngularClient/src/settings/settings.ts
-!AngularClient/src/settings/Readme.md
-
-# DataMigrator
-DataMigrator/Configs/*.config
-
-# WebApi
-WebApi/App_Data/
-WebApi/Configs/**/*.config
-!WebApi/Configs/Setup/*
+src/settings/*
+!src/settings/settings.ts
+!src/settings/Readme.md
