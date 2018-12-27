@@ -2,6 +2,7 @@ form {
   display: inline-block;
   width: 100%;
 }
+
 .mat-card {
   width: 200px;
   max-width: 200px !important;

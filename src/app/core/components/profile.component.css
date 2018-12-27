@@ -18,6 +18,28 @@ h2 {
   margin: 16px 0 6px !important;
 }
 
+.mat-card {
+  width: 200px;
+  float: left !important;
+  margin: 0 5px 20px 5px !important;
+  padding: 0 0 18px 18px !important;
+}
+
+.mat-card-title {
+  font-size: 18px;
+  padding: 10px;
+}
+
+.mat-card-content {
+  font-size: 36px;
+  text-align: center;
+  color: #1c7d4f;
+}
+
+.mat-form-field {
+  float: left;
+}
+
 .edit-row button {
   margin: 16px 8px 16px 8px;
   font-family: Arial;
@@ -25,15 +47,15 @@ h2 {
 }
 
 .mat-flat-button {
-  margin: -6px 0 20px 34px !important;
+  margin: 17px 4px 0 36px;
+}
+
+.thn {
+  margin: 17px 0 0 4px !important;
 }
 
 .mat-button {
-  margin: 16px 0 16px;
-}
-
-.mat-button[disabled] {
-  color: rgba(0, 0, 0, 0.26) !important;
+  color: gray;
 }
 
 .edit-row i {

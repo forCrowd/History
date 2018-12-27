@@ -1,5 +1,10 @@
 ### Changelog
 
+**0.1.4**
+
+* Profile and history-overview pages is updated
+* Minor update
+
 **0.1.3**
 
 * Minor

@@ -4,11 +4,10 @@ form {
 }
 
 .mat-card {
-  max-width: 200px !important;
   width: 200px;
-  height: 110px !important;
   float: left !important;
   margin: 0 5px 20px 5px !important;
+  padding: 0 0 18px 18px !important;
 }
 
 .mat-card-title {
@@ -65,15 +64,6 @@ form {
 .text-muted {
   color: inherit !important;
   opacity: 0.6;
-}
-
-
-.b-success {
-  border-color: #22b66e;
-}
-
-.b-info {
-  border-color: #2196f3;
 }
 
 .text-color {
@@ -509,4 +499,16 @@ div i {
 
 .mb-150 {
   margin-bottom: 150px !important;
+}
+
+.b-success {
+  border-color: #22b66e;
+}
+
+.b-info {
+  border-color: #2196f3;
+}
+
+.b-warn {
+  border-color: #b07cdd;
 }

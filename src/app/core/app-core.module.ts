@@ -17,7 +17,6 @@ import { LandingPageComponent } from "./components/landing-page.component";
 import { ProfileComponent } from "./components/profile.component";
 import { ProfileRemoveProjectComponent } from "./components/profile-remove-project.component";
 import { SearchComponent } from "./components/search.component";
-import { HistoryComponent } from "./components/history.component";
 import { RemoveHistoryConfirmComponent } from "./components/remove-history.component";
 import { HistoryOverviewComponent } from "./components/history-overview.component";
 
@@ -47,12 +46,7 @@ const appCoreRoutes: Routes = [
   { path: "app/search", component: SearchComponent, data: { title: "Search" } },
   { path: "app/ex", component: ExComponent }, // TODO: Remove! Only here to test appErrorHandler on production
 
-  { path: "history/:timeline-name", component: HistoryOverviewComponent, canActivate: [AuthGuard], canDeactivate: [CanDeactivateGuard], resolve: { title: DynamicTitleResolve } },
-
-  // Users
-  { path: "users/:username", component: HistoryComponent, resolve: { title: DynamicTitleResolve }, children: [
-    { path: ":timeline", component: HistoryComponent, resolve: { title: DynamicTitleResolve }, },
-  ]},
+  { path: "edit/:timeline-name", component: HistoryOverviewComponent, canActivate: [AuthGuard], canDeactivate: [CanDeactivateGuard], resolve: { title: DynamicTitleResolve } }
 
 ];
 
@@ -72,13 +66,9 @@ const coreConfig: ICoreConfig = {
     ProfileComponent,
     ProfileRemoveProjectComponent,
     SearchComponent,
-    HistoryComponent,
     HistoryOverviewComponent,
-    RemoveHistoryConfirmComponent,
   ],
   entryComponents: [
-    ProfileRemoveProjectComponent,
-    RemoveHistoryConfirmComponent,
   ],
   exports: [
     RouterModule,
