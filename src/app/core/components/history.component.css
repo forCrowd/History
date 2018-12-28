@@ -504,3 +504,42 @@ div i {
 .mb-150 {
   margin-bottom: 150px !important;
 }
+
+.c-white {
+  color: white !important;
+}
+
+.tl-footer {
+  display: block;
+  width: 12em;
+  text-align: center;
+  margin-left: -6px;
+}
+
+.ui-icon:before {
+  position: relative;
+  z-index: 1;
+}
+
+.ui-icon.info:after {
+  background-color: #2196f3;
+}
+
+.ui-icon.b-2x:after {
+  border-width: 2px;
+}
+
+.ui-icon:after {
+  content: "";
+  border-width: 1px;
+  border-style: solid;
+  border-color: inherit;
+  border-radius: 2em;
+  width: 2em;
+  height: 2em;
+  top: -1.6em;
+  display: block;
+  position: relative;
+  z-index: 0;
+  background-clip: padding-box;
+}
