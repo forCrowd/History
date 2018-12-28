@@ -69,6 +69,7 @@ const coreConfig: ICoreConfig = {
     HistoryOverviewComponent,
   ],
   entryComponents: [
+    ProfileRemoveProjectComponent,
   ],
   exports: [
     RouterModule,
