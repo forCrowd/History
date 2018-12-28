@@ -1,9 +1,6 @@
 import { Component, OnInit } from "@angular/core";
-import { FormControl } from "@angular/forms";
-import { MatDialog, MatTableDataSource } from "@angular/material";
-import { SelectionModel } from "@angular/cdk/collections";
-import { Project, AuthService, ProjectService, Element, ElementItem, ElementField, ElementCell, NotificationService, ElementFieldDataType, User } from "@forcrowd/backbone-client-core";
-import { finalize } from "rxjs/operators";
+import { MatDialog } from "@angular/material";
+import { Project, AuthService, ProjectService, Element, ElementItem, ElementField, ElementFieldDataType, User } from "@forcrowd/backbone-client-core";
 
 // Service
 import { AppProjectService } from "../app-core.module";
@@ -16,11 +13,7 @@ import { ProfileRemoveProjectComponent } from './profile-remove-project.componen
 })
 export class ProfileComponent implements OnInit {
 
-  displayedColumns = ["select", "name", "items", "createdOn", "functions"];
-  dataSource = new MatTableDataSource<Element>([]);
   entry: string = "";
-  selection = new SelectionModel<Element>(true, []);
-  selectedTab = new FormControl(0);
   project: Project = null;
   profileUser: User = null;
   isBusy: boolean;
@@ -44,8 +37,8 @@ export class ProfileComponent implements OnInit {
       selectedElement: null,
     }
 
-  constructor(private readonly authService: AuthService,
-    private readonly projectService: ProjectService,
+  constructor(private authService: AuthService,
+    private projectService: ProjectService,
     private dialog: MatDialog) {
   }
 
@@ -120,12 +113,10 @@ export class ProfileComponent implements OnInit {
     this.projectService.createUserElementCell(cell2, 0);
 
     this.projectService.saveChanges().subscribe(() => {
-      this.selectedTab.setValue(this.project.ElementSet.length + 1);
       this.entry = "";
       this.isBusy = false;
     });
 
-    this.dataSource.data = this.project.ElementSet;
   }
 
   // Delete Timeline (history)
@@ -139,32 +130,18 @@ export class ProfileComponent implements OnInit {
         return;
       }
 
-      if (this.selection.selected.length > 0) {
-
-        this.selection.selected.forEach(element => {
-          this.projectService.removeElement(element);
-        });
-
-        this.selection.clear();
-
-        this.projectService.saveChanges().pipe(
-          finalize(() => {
-            this.dataSource.data = this.project.ElementSet;
-          })).subscribe();
-      }
-
+      this.projectService.removeElement(element);
+      this.projectService.saveChanges().subscribe();
     });
   }
 
   // Set project element and field
   loadProject(projectId: number) {
     this.projectService.getProjectExpanded<Project>(projectId).subscribe(project => {
-
       if (!project) return;
 
-      // Project History
+      // Project
       this.project = project;
-      this.dataSource.data = this.project.ElementSet;
       this.isBusy = false;
     });
   }
@@ -192,22 +169,6 @@ export class ProfileComponent implements OnInit {
       }
 
     });
-  }
-
-  isAllSelected() {
-    const numSelected = this.selection.selected.length;
-    const numRows = this.dataSource.data.length;
-    return numSelected === numRows;
-  }
-
-  masterToggle() {
-    this.isAllSelected() ?
-      this.selection.clear() :
-      this.dataSource.data.forEach(row => this.selection.select(row));
-  }
-
-  trackBy(index: number, item: Element) {
-    return item.Id;
   }
 
 }

@@ -1,18 +1,7 @@
 <div class="m-16">
     <h1>
-      {{ username | titlecase }}`s Timeline
+      <a routerLink="/{{ username }}"> {{ username | titlecase }}`s Timeline</a>
     </h1>
-  </div>
-
-  <div class="m-16" *ngIf="project?.ElementSet">
-    <mat-card  *ngFor="let timeline of project.ElementSet; let i = index">
-        <mat-card-title>
-         <a routerLink="/users/{{username}}/{{ timeline.Name }}" >{{ timeline.Name }}</a>
-        </mat-card-title>
-        <mat-card-content>
-          {{ timeline?.ElementItemSet?.length / 2 }}
-        </mat-card-content>
-    </mat-card>
   </div>
 
   <div class="m-16 d-g">
@@ -23,7 +12,7 @@
           <ul class="timeline">
             <li class="tl-header">
               <div class="btn white">
-                {{ history.Name }}
+                <a routerLink="/{{ username }}/{{ history.Name }}">{{ history.Name }}</a>
               </div>
             </li>
 
@@ -46,9 +35,8 @@
                 </div>
               </div>
             </li>
-
-            <li class="tl-header">
-              <div class="btn btn-sm white btn-rounded">History Timeline</div>
+            <li class="tl-footer">
+              <i class="ui-icon fa fa-history b-white c-white b-2x info"></i>
             </li>
           </ul>
         </div>
@@ -83,9 +71,8 @@
             </div>
           </div>
         </li>
-
-        <li class="tl-header">
-          <div class="btn btn-sm white btn-rounded">History Timeline</div>
+        <li class="tl-footer">
+          <i class="ui-icon fa fa-history b-white c-white b-2x info"></i>
         </li>
       </ul>
     </div>

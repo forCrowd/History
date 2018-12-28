@@ -1,8 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
-import { FormControl } from "@angular/forms";
 import { MatDialog } from "@angular/material";
-import { Project, AuthService, ProjectService, Element, ElementItem, ElementField, ElementCell, NotificationService, ElementFieldDataType } from "@forcrowd/backbone-client-core";
+import { Project, AuthService, ProjectService, Element, ElementItem, ElementField, ElementCell, NotificationService } from "@forcrowd/backbone-client-core";
 import { Subscription } from "rxjs";
 import { finalize } from "rxjs/operators";
 
@@ -11,7 +10,6 @@ import { RemoveHistoryConfirmComponent } from "./remove-history.component";
 
 // Service
 import { AppProjectService } from "../app-core.module";
-import { ProfileRemoveProjectComponent } from "./profile-remove-project.component";
 
 @Component({
   selector: "history-overview",
@@ -24,7 +22,6 @@ export class HistoryOverviewComponent implements OnInit {
   changeElementName: boolean = false;
   isBusy: boolean;
   project: Project = null;
-  selectedTab = new FormControl(0);
   subscriptions: Subscription[] = [];
   timeline: string = null;
   timelineName: string = "";
@@ -190,29 +187,6 @@ export class HistoryOverviewComponent implements OnInit {
     });
   }
 
-  // Delete Timeline (history)
-  deleteTimeline(element: Element): void {
-
-    const dialogRef = this.dialog.open(ProfileRemoveProjectComponent);
-
-    dialogRef.afterClosed().subscribe(confirmed => {
-
-      if (!confirmed) {
-        return;
-      }
-
-      this.projectService.removeElement(element);
-      this.projectService.saveChanges().pipe(
-        finalize(() => {
-          if (this.project.ElementSet.length > 0) {
-            this.selectTimeline(0);
-            this.selectedTab.setValue(0);
-          }
-          this.notificationService.notification.next("Your timeline has been removed!");
-        })).subscribe();
-    });
-  }
-
   // Edit Timeline Header (Chane element name)
   editTimelineHeader(element: Element): void {
     this.notificationService.notification.next("Please write new timeline name form to input then submit");
@@ -264,7 +238,6 @@ export class HistoryOverviewComponent implements OnInit {
 
   // Set selected timeline element
   selectTimeline(value: number): void {
-    this.selectedTab.setValue(value);
     if (this.project.ElementSet.length > 0) {
       this.selectedElement = this.project.ElementSet[value];
       this.selectedElementField = this.selectedElement.ElementFieldSet[0];
