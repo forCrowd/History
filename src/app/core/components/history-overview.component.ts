@@ -20,14 +20,14 @@ import { ProfileRemoveProjectComponent } from "./profile-remove-project.componen
 })
 export class HistoryOverviewComponent implements OnInit {
 
-  entry: string = "";
-  changeElementName: boolean = false;
+  entry = "";
+  changeElementName = false;
   isBusy: boolean;
   project: Project = null;
   selectedTab = new FormControl(0);
   subscriptions: Subscription[] = [];
   timeline: string = null;
-  timelineName: string = "";
+  timelineName = "";
 
   get currentUser() {
     return this.authService.currentUser;

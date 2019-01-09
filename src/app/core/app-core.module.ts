@@ -1,4 +1,4 @@
-import { Component, NgModule } from "@angular/core";
+import { NgModule } from "@angular/core";
 import { BrowserModule } from "@angular/platform-browser";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { RouterModule, Routes } from "@angular/router";
@@ -10,16 +10,16 @@ import { SharedModule } from "../shared/shared.module";
 import { settings } from "../../settings/settings";
 
 // Components
-import { ContributorsComponent } from "./components/contributors.component";
 import { CoreComponent } from "./components/core.component";
+import { GettingStartedComponent } from "./components/getting-started.component";
+import { HistoryComponent } from "./components/history.component";
+import { HistoryOverviewComponent } from "./components/history-overview.component";
 import { HomeComponent } from "./components/home.component";
 import { LandingPageComponent } from "./components/landing-page.component";
 import { ProfileComponent } from "./components/profile.component";
 import { ProfileRemoveProjectComponent } from "./components/profile-remove-project.component";
-import { SearchComponent } from "./components/search.component";
-import { HistoryComponent } from "./components/history.component";
 import { RemoveHistoryConfirmComponent } from "./components/remove-history.component";
-import { HistoryOverviewComponent } from "./components/history-overview.component";
+import { SearchComponent } from "./components/search.component";
 
 // Services
 import { AppProjectService } from "./app-project.service";
@@ -27,33 +27,24 @@ import { AuthGuard } from "./auth-guard.service";
 import { CanDeactivateGuard } from "./can-deactivate-guard.service";
 import { DynamicTitleResolve } from "./dynamic-title-resolve.service";
 
-export { AppProjectService, AuthGuard, CanDeactivateGuard, DynamicTitleResolve }
-
-// TODO: Remove! Only here to test appErrorHandler on production
-@Component({
-  template: ``
-})
-export class ExComponent {
-  constructor() { throw new Error("test"); }
-}
+export { AppProjectService, AuthGuard, CanDeactivateGuard, DynamicTitleResolve };
 
 const appCoreRoutes: Routes = [
-
   // Core
   { path: "", component: LandingPageComponent, data: { title: "Home" } },
   { path: "app/home", redirectTo: "", pathMatch: "full" },
-  { path: "app/contributors", component: ContributorsComponent, data: { title: "Contributors" } },
-  { path: "app/getting-started", component: ProfileComponent, data: { title: "Getting Started" } },
+  { path: "app/getting-started", component: GettingStartedComponent, data: { title: "Getting Started" } },
   { path: "app/search", component: SearchComponent, data: { title: "Search" } },
-  { path: "app/ex", component: ExComponent }, // TODO: Remove! Only here to test appErrorHandler on production
 
   { path: "history/:timeline-name", component: HistoryOverviewComponent, canActivate: [AuthGuard], canDeactivate: [CanDeactivateGuard], resolve: { title: DynamicTitleResolve } },
 
   // Users
-  { path: "users/:username", component: HistoryComponent, resolve: { title: DynamicTitleResolve }, children: [
-    { path: ":timeline", component: HistoryComponent, resolve: { title: DynamicTitleResolve }, },
-  ]},
-
+  {
+    path: ":username",
+    component: HistoryComponent,
+    resolve: { title: DynamicTitleResolve },
+    children: [{ path: ":timeline", component: HistoryComponent, resolve: { title: DynamicTitleResolve } }]
+  }
 ];
 
 const coreConfig: ICoreConfig = {
@@ -64,34 +55,20 @@ const coreConfig: ICoreConfig = {
 
 @NgModule({
   declarations: [
-    ContributorsComponent,
     CoreComponent,
-    ExComponent,
+    GettingStartedComponent,
+    HistoryComponent,
+    HistoryOverviewComponent,
     HomeComponent,
     LandingPageComponent,
     ProfileComponent,
     ProfileRemoveProjectComponent,
-    SearchComponent,
-    HistoryComponent,
-    HistoryOverviewComponent,
     RemoveHistoryConfirmComponent,
+    SearchComponent
   ],
-  entryComponents: [
-    ProfileRemoveProjectComponent,
-    RemoveHistoryConfirmComponent,
-  ],
-  exports: [
-    RouterModule,
-    CoreComponent,
-  ],
-  imports: [
-    SharedModule,
-    BrowserModule,
-    BrowserAnimationsModule,
-    RouterModule.forRoot(appCoreRoutes),
-    Angulartics2Module.forRoot(),
-    CoreModule.configure(coreConfig)
-  ],
+  entryComponents: [ProfileRemoveProjectComponent, RemoveHistoryConfirmComponent],
+  exports: [RouterModule, CoreComponent],
+  imports: [BrowserModule, BrowserAnimationsModule, RouterModule.forRoot(appCoreRoutes), Angulartics2Module.forRoot(), CoreModule.configure(coreConfig), SharedModule],
   providers: [
     AuthGuard,
     CanDeactivateGuard,
@@ -99,8 +76,8 @@ const coreConfig: ICoreConfig = {
     // Project service
     {
       provide: ProjectService,
-      useClass: AppProjectService,
-    },
+      useClass: AppProjectService
+    }
   ]
 })
-export class AppCoreModule { }
+export class AppCoreModule {}

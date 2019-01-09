@@ -1,14 +1,9 @@
 import { Injectable } from "@angular/core";
 import { Element, ElementField, ElementFieldDataType, ElementItem, ProjectService, Project } from "@forcrowd/backbone-client-core";
 
-import { settings } from "../../settings/settings";
-
 @Injectable()
 export class AppProjectService extends ProjectService {
-
-
   createProjectHistory(): Project {
-
     // Project
     const project = super.createProjectEmpty();
     project.Name = "History App";
@@ -67,5 +62,4 @@ export class AppProjectService extends ProjectService {
 
     return project;
   }
-
 }
