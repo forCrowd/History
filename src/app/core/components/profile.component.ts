@@ -1,19 +1,24 @@
 import { Component, OnInit } from "@angular/core";
-import { MatDialog } from "@angular/material";
 import { Project, AuthService, ProjectService, Element, ElementItem, ElementField, ElementFieldDataType, User } from "@forcrowd/backbone-client-core";
+import { FormControl } from "@angular/forms";
+import { MatDialog, MatTableDataSource } from "@angular/material";
+import { SelectionModel } from "@angular/cdk/collections";
 
 // Service
 import { AppProjectService } from "../app-core.module";
-import { ProfileRemoveProjectComponent } from './profile-remove-project.component';
+import { ProfileRemoveProjectComponent } from "./profile-remove-project.component";
 
 @Component({
   selector: "profile",
   templateUrl: "profile.component.html",
-  styleUrls: ["profile.component.css"],
+  styleUrls: ["profile.component.css"]
 })
 export class ProfileComponent implements OnInit {
-
-  entry: string = "";
+  displayedColumns = ["select", "name", "items", "createdOn", "functions"];
+  dataSource = new MatTableDataSource<Element>([]);
+  entry = "";
+  selection = new SelectionModel<Element>(true, []);
+  selectedTab = new FormControl(0);
   project: Project = null;
   profileUser: User = null;
   isBusy: boolean;
@@ -32,15 +37,12 @@ export class ProfileComponent implements OnInit {
   }
 
   private fields: {
-    selectedElement: Element,
+    selectedElement: Element;
   } = {
-      selectedElement: null,
-    }
+    selectedElement: null
+  };
 
-  constructor(private authService: AuthService,
-    private projectService: ProjectService,
-    private dialog: MatDialog) {
-  }
+  constructor(private authService: AuthService, private projectService: ProjectService, private dialog: MatDialog) {}
 
   cancelEditing() {
     this.entry = "";
@@ -60,7 +62,6 @@ export class ProfileComponent implements OnInit {
 
   // Create a new History Timeline
   createNewHistroyTimeline(): void {
-
     // New Timeline Element
     const element = this.projectService.createElement({
       Project: this.project,
@@ -85,7 +86,7 @@ export class ProfileComponent implements OnInit {
     this.projectService.createElementCell({
       ElementField: elementField,
       ElementItem: elementItem,
-      StringValue: "First",
+      StringValue: "First"
     });
 
     // Like Dislikes Count
@@ -116,16 +117,13 @@ export class ProfileComponent implements OnInit {
       this.entry = "";
       this.isBusy = false;
     });
-
   }
 
   // Delete Timeline (history)
   deleteSelectedTimeline(element: Element): void {
-
     const dialogRef = this.dialog.open(ProfileRemoveProjectComponent);
 
     dialogRef.afterClosed().subscribe(confirmed => {
-
       if (!confirmed) {
         return;
       }
@@ -138,7 +136,9 @@ export class ProfileComponent implements OnInit {
   // Set project element and field
   loadProject(projectId: number) {
     this.projectService.getProjectExpanded<Project>(projectId).subscribe(project => {
-      if (!project) return;
+      if (!project) {
+        return;
+      }
 
       // Project
       this.project = project;
@@ -147,19 +147,16 @@ export class ProfileComponent implements OnInit {
   }
 
   ngOnInit(): void {
-
     if (!this.currentUser || !this.currentUser.isAuthenticated()) {
       this.createProjectHistory();
       return;
     }
 
-    this.authService.getUser(this.currentUser.UserName).subscribe((user) => {
-
+    this.authService.getUser(this.currentUser.UserName).subscribe(user => {
       this.profileUser = user;
 
-      for (var i = 0; i < this.currentUser.ProjectSet.length; i++) {
-
-        var project = this.currentUser.ProjectSet[i];
+      for (let i = 0; i < this.currentUser.ProjectSet.length; i++) {
+        const project = this.currentUser.ProjectSet[i];
 
         if (project.Name === "History App") {
           this.project = project;
@@ -167,8 +164,6 @@ export class ProfileComponent implements OnInit {
           break;
         }
       }
-
     });
   }
-
 }

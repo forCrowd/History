@@ -1,0 +1,28 @@
+{
+	"editor.codeLens": false,
+	"editor.detectIndentation": false,
+	"editor.formatOnType": true,
+	"editor.insertSpaces": false,
+	"editor.letterSpacing": 1,
+	"editor.mouseWheelScrollSensitivity": 5,
+	"files.defaultLanguage": "typescript",
+	"files.exclude": {
+		"**/.git": true,
+		"**/.DS_Store": true,
+		"**/*.js": {
+			"when": "$(basename).ts"
+		},
+		"**/*.js.map": {
+			"when": "$(basename)"
+		}
+	},
+	"files.trimTrailingWhitespace": true,
+	"prettier.tabWidth": 4,
+	"prettier.printWidth": 180,
+	"prettier.useTabs": true,
+	"typescript.updateImportsOnFileMove.enabled": "always",
+	"vsicons.projectDetection.autoReload": true,
+	"window.zoomLevel": -1,
+	"workbench.colorTheme": "Visual Studio Dark",
+	"workbench.iconTheme": "vscode-icons",
+}

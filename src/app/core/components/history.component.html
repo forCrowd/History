@@ -1,80 +1,14 @@
 <div class="m-16">
-    <h1>
-      <a routerLink="/{{ username }}"> {{ username | titlecase }}`s Timeline</a>
-    </h1>
-  </div>
+  <h1>{{ username }}`s Timeline</h1>
+</div>
 
-  <div class="m-16 d-g">
-    <mat-tab-group *ngIf="timeline === null && project?.ElementSet" (selectedIndexChange)="selectTimeline($event)" [selectedIndex]="selectedTab.value">
-      <mat-tab *ngFor="let history of project.ElementSet" label="{{ history.Name }}">
+<div *ngIf="!project">Loading...</div>
 
-        <div *ngIf="selectedElementCellSet !== null" class="m-16 mb-150">
-          <ul class="timeline">
-            <li class="tl-header">
-              <div class="btn white">
-                <a routerLink="/{{ username }}/{{ history.Name }}">{{ history.Name }}</a>
-              </div>
-            </li>
-
-            <li class="tl-item" *ngFor="let cell of selectedElementCellSet; let i = index">
-              <div class="tl-wrap b-primary">
-                <span class="tl-date text-muted">{{ cell.CreatedOn | amTimeAgo }}</span>
-                <div class="tl-content box-color text-color box-shadow p-a-sm f-l tl-c-w80p">
-                  <span class="arrow b-white left pull-top"></span>
-                  {{ cell.StringValue }}
-                </div>
-                <div class="tl-content tl-content-bg-ld box-color text-color box-shadow p-a-sm">
-                  <span class="arrow arrow-bg-ld b-white left pull-top"></span>
-                  <span class="pull-right label" [ngClass]="{'warning': decimalValueTotal(i) < 0, 'success': decimalValueTotal(i) > 0 }">
-                    {{ decimalValueTotal(i) }}
-                  </span>
-                  <i (click)="changeLikeCount(-1, i)" class="fa fa-thumbs-down p2406" aria-hidden="true"></i>
-                  <span class="like">
-                    <i (click)="changeLikeCount(1, i)" class="fa fa-thumbs-up p2406" aria-hidden="true"></i>
-                  </span>
-                </div>
-              </div>
-            </li>
-            <li class="tl-footer">
-              <i class="ui-icon fa fa-history b-white c-white b-2x info"></i>
-            </li>
-          </ul>
-        </div>
-
-      </mat-tab>
-    </mat-tab-group>
-
-    <div *ngIf="timeline !== null" class="m-16 mb-150">
-      <ul class="timeline">
-        <li class="tl-header">
-          <div class="btn white">
-            {{ selectedElement?.Name }}
-          </div>
-        </li>
-
-        <li class="tl-item" *ngFor="let cell of selectedElementCellSet; let i = index">
-          <div class="tl-wrap b-primary">
-            <span class="tl-date text-muted">{{ cell.CreatedOn | amTimeAgo }}</span>
-            <div class="tl-content box-color text-color box-shadow p-a-sm f-l tl-c-w80p">
-              <span class="arrow b-white left pull-top"></span>
-              {{ cell.StringValue }}
-            </div>
-            <div class="tl-content tl-content-bg-ld box-color text-color box-shadow p-a-sm">
-              <span class="arrow arrow-bg-ld b-white left pull-top"></span>
-              <span class="pull-right label" [ngClass]="{'warning': decimalValueTotal(i) < 0, 'success': decimalValueTotal(i) > 0 }">
-                {{ selectedElementLikeCountSet[i]?.UserElementCellSet[0]?.DecimalValue }}
-              </span>
-              <i (click)="!this.isBusy ? changeLikeCount(-1, i) : null" class="fa fa-thumbs-down p2406" aria-hidden="true"></i>
-              <span class="like">
-                <i (click)="!this.isBusy ? changeLikeCount(1, i) : null" class="fa fa-thumbs-up p2406" aria-hidden="true"></i>
-              </span>
-            </div>
-          </div>
-        </li>
-        <li class="tl-footer">
-          <i class="ui-icon fa fa-history b-white c-white b-2x info"></i>
-        </li>
-      </ul>
-    </div>
-
-  </div>
+<div class="m-16" *ngIf="project">
+  <mat-card *ngFor="let timeline of project.ElementSet">
+    <mat-card-title>
+      <a routerLink="/{{ username }}/{{ timeline.Name }}">{{ timeline.Name }}</a>
+    </mat-card-title>
+    <mat-card-content> {{ timeline?.ElementItemSet?.length / 2 }} </mat-card-content>
+  </mat-card>
+</div>

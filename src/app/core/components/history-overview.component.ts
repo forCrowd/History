@@ -18,13 +18,13 @@ import { AppProjectService } from "../app-core.module";
 })
 export class HistoryOverviewComponent implements OnInit {
 
-  entry: string = "";
-  changeElementName: boolean = false;
+  entry = "";
+  changeElementName = false;
   isBusy: boolean;
   project: Project = null;
   subscriptions: Subscription[] = [];
   timeline: string = null;
-  timelineName: string = "";
+  timelineName = "";
 
   get currentUser() {
     return this.authService.currentUser;
