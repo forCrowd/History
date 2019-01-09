@@ -4,8 +4,8 @@ import { RouterModule, Routes } from "@angular/router";
 import { SharedModule } from "../../shared/shared.module";
 
 import { AuthGuard, CanDeactivateGuard, DynamicTitleResolve } from "../../core/app-core.module";
-import { HistoryComponent } from './history.component';
-import { RemoveHistoryConfirmComponent } from './remove-history.component';
+import { HistoryComponent } from "./history.component";
+import { RemoveHistoryConfirmComponent } from "./remove-history.component";
 
 const projectRoutes: Routes = [
   { path: ":username", component: HistoryComponent, resolve: { title: DynamicTitleResolve } },

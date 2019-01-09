@@ -12,7 +12,7 @@ import { settings } from "../../settings/settings";
 // Components
 import { CoreComponent } from "./components/core.component";
 import { GettingStartedComponent } from "./components/getting-started.component";
-import { HistoryComponent } from "./components/history.component";
+//import { HistoryComponent } from "./components/history.component";
 import { HistoryOverviewComponent } from "./components/history-overview.component";
 import { HomeComponent } from "./components/home.component";
 import { LandingPageComponent } from "./components/landing-page.component";
@@ -36,17 +36,17 @@ const appCoreRoutes: Routes = [
   { path: "app/getting-started", component: GettingStartedComponent, data: { title: "Getting Started" } },
   { path: "app/search", component: SearchComponent, data: { title: "Search" } },
 
-  { path: "edit/:timeline-name", component: HistoryOverviewComponent, canActivate: [AuthGuard], canDeactivate: [CanDeactivateGuard], resolve: { title: DynamicTitleResolve } }
+  { path: "edit/:timeline-name", component: HistoryOverviewComponent, canActivate: [AuthGuard], canDeactivate: [CanDeactivateGuard], resolve: { title: DynamicTitleResolve } },
 
-  { path: "history/:timeline-name", component: HistoryOverviewComponent, canActivate: [AuthGuard], canDeactivate: [CanDeactivateGuard], resolve: { title: DynamicTitleResolve } },
+  { path: "history/:timeline-name", component: HistoryOverviewComponent, canActivate: [AuthGuard], canDeactivate: [CanDeactivateGuard], resolve: { title: DynamicTitleResolve } }
 
   // Users
-  {
-    path: ":username",
-    component: HistoryComponent,
-    resolve: { title: DynamicTitleResolve },
-    children: [{ path: ":timeline", component: HistoryComponent, resolve: { title: DynamicTitleResolve } }]
-  }
+  // {
+  //   path: ":username",
+  //   component: HistoryComponent,
+  //   resolve: { title: DynamicTitleResolve },
+  //   children: [{ path: ":timeline", component: HistoryComponent, resolve: { title: DynamicTitleResolve } }]
+  // }
 ];
 
 const coreConfig: ICoreConfig = {
@@ -59,14 +59,14 @@ const coreConfig: ICoreConfig = {
   declarations: [
     CoreComponent,
     GettingStartedComponent,
-    HistoryComponent,
+    //HistoryComponent,
     HistoryOverviewComponent,
     HomeComponent,
     LandingPageComponent,
     ProfileComponent,
     ProfileRemoveProjectComponent,
     SearchComponent,
-    HistoryOverviewComponent,
+    HistoryOverviewComponent
   ],
   entryComponents: [ProfileRemoveProjectComponent, RemoveHistoryConfirmComponent],
   exports: [RouterModule, CoreComponent],
