@@ -2,7 +2,15 @@
   <h1>{{ username }}`s Timelines</h1>
 </div>
 
-<div *ngIf="!project">Loading...</div>
+<div class="m-16">
+  <form #historyForm="ngForm" autocomplete="off">
+    <mat-form-field>
+      <input matInput id="timelineName" name="timelineName" type="text" placeholder="Write something" [(ngModel)]="timelineName" class="form-control" required />
+    </mat-form-field>
+    <button mat-flat-button (click)="create()" [disabled]="historyForm.form.invalid || isBusy">Create</button>
+    <button mat-flat-button class="other" (click)="timelineName = ''" color="warn" [disabled]="historyForm.form.invalid || isBusy">Cancel</button>
+  </form>
+</div>
 
 <div class="m-16" *ngIf="project">
   <mat-card *ngFor="let timeline of project.ElementSet">

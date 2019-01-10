@@ -9,7 +9,9 @@ import { Project, ProjectService, AuthService } from "@forcrowd/backbone-client-
   styleUrls: ["profile.component.css"]
 })
 export class ProfileComponent implements OnInit {
+  isBusy = false;
   project: Project = null;
+  timelineName = "";
   username: string = null;
 
   constructor(
@@ -18,6 +20,32 @@ export class ProfileComponent implements OnInit {
     private readonly projectService: ProjectService,
     private readonly router: Router
   ) {}
+
+  create() {
+    this.timelineName = this.timelineName.trim();
+
+    if (!this.timelineName) {
+      return;
+    }
+
+    const timeline = {
+      Project: this.project,
+      Name: this.timelineName
+    };
+
+    this.projectService.createElement(timeline);
+
+    this.isBusy = true;
+    this.projectService.saveChanges().subscribe(
+      () => {
+        this.timelineName = "";
+      },
+      null,
+      () => {
+        this.isBusy = false;
+      }
+    );
+  }
 
   ngOnInit(): void {
     this.username = this.activatedRoute.snapshot.params["username"];
@@ -29,15 +57,22 @@ export class ProfileComponent implements OnInit {
       return;
     }
 
-    this.projectService.getProjectSet<Project>(this.username).subscribe(projectSet => {
-      for (let i = 0; i < projectSet.length; i++) {
-        const project = projectSet[i];
-        if (project.Name === "History App") {
-          this.projectService.getProjectExpanded(project.Id).subscribe(projectExpanded => {
-            this.project = projectExpanded;
-          });
+    this.isBusy = true;
+    this.projectService.getProjectSet<Project>(this.username).subscribe(
+      projectSet => {
+        for (let i = 0; i < projectSet.length; i++) {
+          const project = projectSet[i];
+          if (project.Name === "History App") {
+            this.projectService.getProjectExpanded(project.Id).subscribe(projectExpanded => {
+              this.project = projectExpanded;
+            });
+          }
         }
+      },
+      null,
+      () => {
+        this.isBusy = false;
       }
-    });
+    );
   }
 }

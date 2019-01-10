@@ -21,9 +21,9 @@ export class AppComponent { }
     AppComponent
   ],
   imports: [
-    AppCoreModule,
     AccountModule,
     ProjectModule,
+    AppCoreModule,
     NotFoundModule // Catch-all route
   ]
 })
