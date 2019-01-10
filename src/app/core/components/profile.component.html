@@ -18,5 +18,8 @@
       <a routerLink="/{{ username }}/{{ timeline.Id }}">{{ timeline.Name }}</a>
     </mat-card-title>
     <mat-card-content> {{ timeline.ElementItemSet.length }} </mat-card-content>
+    <mat-card-actions *ngIf="isOwner">
+      <button mat-button (click)="delete(timeline)"><i class="material-icons">delete</i> Delete</button>
+    </mat-card-actions>
   </mat-card>
 </div>

@@ -1,7 +1,10 @@
 import { Component, OnInit } from "@angular/core";
+import { MatDialog } from "@angular/material";
 import { ActivatedRoute } from "@angular/router";
 import { Router } from "@angular/router";
-import { Project, ProjectService, AuthService } from "@forcrowd/backbone-client-core";
+import { AuthService, Element, Project, ProjectService } from "@forcrowd/backbone-client-core";
+
+import { ProfileRemoveProjectComponent } from "./profile-remove-project.component";
 
 @Component({
   selector: "profile",
@@ -10,6 +13,7 @@ import { Project, ProjectService, AuthService } from "@forcrowd/backbone-client-
 })
 export class ProfileComponent implements OnInit {
   isBusy = false;
+  isOwner = false;
   project: Project = null;
   timelineName = "";
   username: string = null;
@@ -17,6 +21,7 @@ export class ProfileComponent implements OnInit {
   constructor(
     private readonly activatedRoute: ActivatedRoute,
     private readonly authService: AuthService,
+    private readonly matDialog: MatDialog,
     private readonly projectService: ProjectService,
     private readonly router: Router
   ) {}
@@ -47,6 +52,19 @@ export class ProfileComponent implements OnInit {
     );
   }
 
+  delete(timeline: Element) {
+    const dialogRef = this.matDialog.open(ProfileRemoveProjectComponent);
+
+    dialogRef.afterClosed().subscribe(confirmed => {
+      if (!confirmed) {
+        return;
+      }
+
+      this.projectService.removeElement(timeline);
+      this.projectService.saveChanges().subscribe();
+    });
+  }
+
   ngOnInit(): void {
     this.username = this.activatedRoute.snapshot.params["username"];
 
@@ -57,8 +75,10 @@ export class ProfileComponent implements OnInit {
       return;
     }
 
+    this.isOwner = this.authService.currentUser.UserName === this.username;
+
     this.isBusy = true;
-    this.projectService.getProjectSet<Project>(this.username).subscribe(
+    this.projectService.getProjectSet(this.username).subscribe(
       projectSet => {
         for (let i = 0; i < projectSet.length; i++) {
           const project = projectSet[i];
