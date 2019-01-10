@@ -12,11 +12,10 @@ import { settings } from "../../settings/settings";
 // Components
 import { CoreComponent } from "./components/core.component";
 import { GettingStartedComponent } from "./components/getting-started.component";
-//import { HistoryComponent } from "./components/history.component";
 import { HistoryOverviewComponent } from "./components/history-overview.component";
 import { HomeComponent } from "./components/home.component";
-import { LandingPageComponent } from "./components/landing-page.component";
 import { ProfileComponent } from "./components/profile.component";
+import { LandingPageComponent } from "./components/landing-page.component";
 import { ProfileRemoveProjectComponent } from "./components/profile-remove-project.component";
 import { SearchComponent } from "./components/search.component";
 import { RemoveHistoryConfirmComponent } from "./components/remove-history.component";
@@ -34,19 +33,15 @@ const appCoreRoutes: Routes = [
   { path: "", component: LandingPageComponent, data: { title: "Home" } },
   { path: "app/home", redirectTo: "", pathMatch: "full" },
   { path: "app/getting-started", component: GettingStartedComponent, data: { title: "Getting Started" } },
-  { path: "app/search", component: SearchComponent, data: { title: "Search" } },
 
   { path: "edit/:timeline-name", component: HistoryOverviewComponent, canActivate: [AuthGuard], canDeactivate: [CanDeactivateGuard], resolve: { title: DynamicTitleResolve } },
 
-  { path: "history/:timeline-name", component: HistoryOverviewComponent, canActivate: [AuthGuard], canDeactivate: [CanDeactivateGuard], resolve: { title: DynamicTitleResolve } }
+  { path: "history/:timeline-name", component: HistoryOverviewComponent, canActivate: [AuthGuard], canDeactivate: [CanDeactivateGuard], resolve: { title: DynamicTitleResolve } },
 
-  // Users
-  // {
-  //   path: ":username",
-  //   component: HistoryComponent,
-  //   resolve: { title: DynamicTitleResolve },
-  //   children: [{ path: ":timeline", component: HistoryComponent, resolve: { title: DynamicTitleResolve } }]
-  // }
+  { path: ":username", component: ProfileComponent, resolve: { title: DynamicTitleResolve } },
+  { path: ":username", component: ProfileComponent, resolve: { title: DynamicTitleResolve }, children: [
+    { path: ":timeline", component: ProfileComponent, resolve: { title: DynamicTitleResolve }, },
+  ]}
 ];
 
 const coreConfig: ICoreConfig = {
@@ -59,14 +54,14 @@ const coreConfig: ICoreConfig = {
   declarations: [
     CoreComponent,
     GettingStartedComponent,
-    //HistoryComponent,
     HistoryOverviewComponent,
     HomeComponent,
     LandingPageComponent,
     ProfileComponent,
     ProfileRemoveProjectComponent,
     SearchComponent,
-    HistoryOverviewComponent
+    HistoryOverviewComponent,
+    RemoveHistoryConfirmComponent,
   ],
   entryComponents: [ProfileRemoveProjectComponent, RemoveHistoryConfirmComponent],
   exports: [RouterModule, CoreComponent],

@@ -13,21 +13,15 @@ export class GettingStartedComponent implements OnInit {
   constructor(private readonly authService: AuthService, private readonly projectService: ProjectService, private router: Router) {}
 
   create() {
-    const project = (this.projectService as AppProjectService).createProjectHistory();
-
-    console.log("u", this.authService.currentUser.UserName);
+    (this.projectService as AppProjectService).createProjectHistory();
 
     this.projectService.saveChanges().subscribe(() => {
-      console.log("saved..");
-      console.log("u2", this.authService.currentUser.UserName);
-      console.log("p", project.Id);
-
       this.router.navigate([this.authService.currentUser.UserName]);
     });
   }
 
   ngOnInit(): void {
-    if (this.authService.currentUser.isAuthenticated) {
+    if (this.authService.currentUser.isAuthenticated()) {
       this.router.navigate([this.authService.currentUser.UserName]);
     }
   }

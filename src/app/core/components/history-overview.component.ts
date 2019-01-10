@@ -14,10 +14,9 @@ import { AppProjectService } from "../app-core.module";
 @Component({
   selector: "history-overview",
   templateUrl: "history-overview.component.html",
-  styleUrls: ["history-overview.component.css"],
+  styleUrls: ["history-overview.component.css"]
 })
 export class HistoryOverviewComponent implements OnInit {
-
   entry = "";
   changeElementName = false;
   isBusy: boolean;
@@ -76,25 +75,26 @@ export class HistoryOverviewComponent implements OnInit {
   }
 
   private fields: {
-    selectedElement: Element,
-    selectedElementField: ElementField,
-    selectedElementCellSet: ElementCell[],
-    selectedCell: ElementCell,
-    selectedElementLikeCountSet: ElementCell[]
+    selectedElement: Element;
+    selectedElementField: ElementField;
+    selectedElementCellSet: ElementCell[];
+    selectedCell: ElementCell;
+    selectedElementLikeCountSet: ElementCell[];
   } = {
-      selectedElement: null,
-      selectedElementField: null,
-      selectedElementCellSet: null,
-      selectedCell: null,
-      selectedElementLikeCountSet: null
-    }
+    selectedElement: null,
+    selectedElementField: null,
+    selectedElementCellSet: null,
+    selectedCell: null,
+    selectedElementLikeCountSet: null
+  };
 
-  constructor(private authService: AuthService,
+  constructor(
+    private authService: AuthService,
     private projectService: ProjectService,
     private activatedRoute: ActivatedRoute,
     private notificationService: NotificationService,
-    private dialog: MatDialog) {
-  }
+    private dialog: MatDialog
+  ) {}
 
   cancelEditing() {
     this.entry = "";
@@ -116,25 +116,23 @@ export class HistoryOverviewComponent implements OnInit {
 
   // Create a new entry in timeline
   createHistroyContent(): void {
-
     if (!this.currentUser || !this.currentUser.isAuthenticated()) this.createProjectHistory();
 
     this.isBusy = true;
 
     if (!this.changeElementName) {
       if (this.selectedElementCell === null) {
-
         // New Item
         const elementItem = this.projectService.createElementItem({
           Element: this.selectedElement,
-          Name: `Entry ${this.selectedElement.ElementItemSet.length + 1}`,
+          Name: `Entry ${this.selectedElement.ElementItemSet.length + 1}`
         }) as ElementItem;
 
         // Cell
         this.projectService.createElementCell({
           ElementField: this.selectedElementField,
           ElementItem: elementItem,
-          StringValue: this.entry,
+          StringValue: this.entry
         });
 
         // Item
@@ -156,23 +154,23 @@ export class HistoryOverviewComponent implements OnInit {
           this.loadProject(this.project.Id);
           this.isBusy = false;
         });
-
       } else {
-        this.selectedElementCell.StringValue !== this.entry ? this.change()
-          : this.isBusy = false;
+        this.selectedElementCell.StringValue !== this.entry ? this.change() : (this.isBusy = false);
       }
     } else {
       // if timeline name will be change then
       this.selectedElement.Name = this.entry;
-      this.projectService.saveChanges().pipe(
-        finalize(()=>{
-          this.entry = "";
-          this.isBusy = false;
-        })
-      ).subscribe();
+      this.projectService
+        .saveChanges()
+        .pipe(
+          finalize(() => {
+            this.entry = "";
+            this.isBusy = false;
+          })
+        )
+        .subscribe();
       this.changeElementName = false;
     }
-
   }
 
   // Change timeline item value
@@ -202,25 +200,23 @@ export class HistoryOverviewComponent implements OnInit {
 
   // Set project element and field
   loadProject(projectId: number) {
-    this.projectService.getProjectExpanded<Project>(projectId)
-      .subscribe(project => {
+    this.projectService.getProjectExpanded<Project>(projectId).subscribe(project => {
+      if (!project) return;
 
-        if (!project) return;
+      // Project History
+      this.project = project;
 
-        // Project History
-        this.project = project;
+      this.timelineName = this.activatedRoute.snapshot.params["timeline-name"];
 
-        this.timelineName = this.activatedRoute.snapshot.params["timeline-name"];
-
-        for (var i = 0; i < this.project.ElementSet.length; i++) {
-          if (this.timelineName === this.project.ElementSet[i].Name) {
-            this.selectTimeline(i);
-            return;
-          }
+      for (var i = 0; i < this.project.ElementSet.length; i++) {
+        if (this.timelineName === this.project.ElementSet[i].Name) {
+          this.selectTimeline(i);
+          return;
         }
+      }
 
-        this.isBusy = false;
-      });
+      this.isBusy = false;
+    });
   }
 
   decimalValueTotal(index: number): number {
@@ -230,7 +226,8 @@ export class HistoryOverviewComponent implements OnInit {
   changeLikeCount(value: number, index: number): void {
     const userElementCellSet = this.selectedElement.ElementFieldSet[1].ElementCellSet[index];
 
-    userElementCellSet.UserElementCellSet.length > 0 ? userElementCellSet.UserElementCellSet[0].DecimalValue = value
+    userElementCellSet.UserElementCellSet.length > 0
+      ? (userElementCellSet.UserElementCellSet[0].DecimalValue = value)
       : this.projectService.createUserElementCell(userElementCellSet, value);
 
     this.projectService.saveChanges().subscribe();
@@ -243,7 +240,7 @@ export class HistoryOverviewComponent implements OnInit {
       this.selectedElementField = this.selectedElement.ElementFieldSet[0];
       this.selectedElementLikeCountSet = this.selectedElement.ElementFieldSet[1].ElementCellSet; // for Like - Dislike
       this.selectedElementCellSet = this.selectedElementField.ElementCellSet as ElementCell[];
-      this.selectedElementCellSet = this.selectedElementCellSet.sort((a, b) => (b.CreatedOn.getTime() - a.CreatedOn.getTime()));
+      this.selectedElementCellSet = this.selectedElementCellSet.sort((a, b) => b.CreatedOn.getTime() - a.CreatedOn.getTime());
     }
   }
 
@@ -252,7 +249,6 @@ export class HistoryOverviewComponent implements OnInit {
     const dialogRef = this.dialog.open(RemoveHistoryConfirmComponent);
 
     dialogRef.afterClosed().subscribe(confirmed => {
-
       if (!confirmed) return;
 
       var likeItemIndex = this.selectedElement.ElementItemSet.indexOf(elementItem);
@@ -260,27 +256,27 @@ export class HistoryOverviewComponent implements OnInit {
       this.projectService.removeElementItem(elementItem);
       this.projectService.removeElementItem(this.selectedElement.ElementItemSet[likeItemIndex]);
 
-      this.projectService.saveChanges().pipe(
-        finalize(() => {
-          this.entry = "";
-          this.selectedElementCell = null;
-          this.loadProject(this.project.Id);
-        })).subscribe();
+      this.projectService
+        .saveChanges()
+        .pipe(
+          finalize(() => {
+            this.entry = "";
+            this.selectedElementCell = null;
+            this.loadProject(this.project.Id);
+          })
+        )
+        .subscribe();
     });
-
   }
 
   ngOnInit(): void {
-
-    if (!this.currentUser || !this.currentUser.isAuthenticated()) {
-      this.createProjectHistory();
-      return;
-    }
+    // if (!this.currentUser || !this.currentUser.isAuthenticated()) {
+    //   this.createProjectHistory();
+    //   return;
+    // }
 
     this.authService.getUser(this.currentUser.UserName).subscribe(() => {
-
       for (var i = 0; i < this.currentUser.ProjectSet.length; i++) {
-
         var project = this.currentUser.ProjectSet[i];
 
         if (project.Name === "History App") {
@@ -289,8 +285,6 @@ export class HistoryOverviewComponent implements OnInit {
           break;
         }
       }
-
     });
   }
-
 }

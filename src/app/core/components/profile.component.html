@@ -1,49 +1,14 @@
 <div class="m-16">
-  <h1>Dashboard</h1>
-  <h2>History timelines</h2>
+  <h1>{{ username }}`s Timelines</h1>
 </div>
 
-<div class="m-16">
-  <form #historyForm="ngForm" autocomplete="off">
-    <mat-form-field>
-      <input matInput id="entry" name="entry" type="text" placeholder="Write new timeline name" [(ngModel)]="entry" class="form-control" required />
-    </mat-form-field>
-    <button mat-flat-button (click)="createNewHistroyTimeline()" [disabled]="historyForm.form.invalid || isBusy">
-      New Timeline
-    </button>
-    <button mat-flat-button class="thn" *ngIf="entry === ''" (click)="cancelEditing()" color="warn" [disabled]="historyForm.form.invalid || isBusy">
-      Cancel
-    </button>
-  </form>
-</div>
+<div *ngIf="!project">Loading...</div>
 
-<div class="m-16">
-
-  <mat-divider></mat-divider>
-
-  <div class="m-16" *ngIf="project?.ElementSet?.length === 0">
-    <mat-card>
-      <div class="noResults">
-        Nothing to display!
-      </div>
-    </mat-card>
-  </div>
-
-  <div class="m-16" *ngIf="project?.ElementSet">
-    <mat-card *ngFor="let timeline of project.ElementSet; let i = index">
-      <mat-card-title>
-        <a routerLink="/edit/{{ timeline.Name }}">{{ timeline.Name }}</a>
-      </mat-card-title>
-      <mat-card-content>
-        {{ timeline?.ElementItemSet?.length / 2 }}
-      </mat-card-content>
-      <mat-card-actions *ngIf="currentUser === profileUser">
-        <button mat-button (click)="deleteSelectedTimeline(timeline)">
-          <i class="material-icons">delete</i>
-          Delete
-        </button>
-      </mat-card-actions>
-    </mat-card>
-  </div>
-
+<div class="m-16" *ngIf="project">
+  <mat-card *ngFor="let timeline of project.ElementSet">
+    <mat-card-title>
+      <a routerLink="/{{ username }}/{{ timeline.Id }}">{{ timeline.Name }}</a>
+    </mat-card-title>
+    <mat-card-content> {{ timeline.ElementItemSet.length }} </mat-card-content>
+  </mat-card>
 </div>
