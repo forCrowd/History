@@ -56,7 +56,7 @@ const appCoreRoutes: Routes = [
     resolve: { title: DynamicTitleResolve }
   },
   {
-    path: ":username/:timeline",
+    path: ":username/:timeline-id",
     component: TimelineComponent,
     resolve: { title: DynamicTitleResolve }
   }

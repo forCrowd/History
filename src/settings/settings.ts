@@ -1,5 +1,4 @@
 export const settings = {
-
   /*
    * Name of the current environment
    */
@@ -8,10 +7,10 @@ export const settings = {
   /*
    * Service application API url
    */
-  serviceApiUrl: "https://api.backbone.forcrowd.org/api/v1",
+  serviceApiUrl: "http://localhost:15001/api/v1",
 
   /*
    * Service application OData url
    */
-  serviceODataUrl: "https://api.backbone.forcrowd.org/odata/v1",
+  serviceODataUrl: "http://localhost:15001/odata/v1"
 };

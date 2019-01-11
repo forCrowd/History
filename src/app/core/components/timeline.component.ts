@@ -1,9 +1,9 @@
 import { Component, OnInit } from "@angular/core";
-import { ActivatedRoute } from "@angular/router";
+import { ActivatedRoute, Router } from "@angular/router";
 import { MatDialog } from "@angular/material";
-import { Project, AuthService, ProjectService, Element, ElementItem, ElementField, ElementCell, NotificationService } from "@forcrowd/backbone-client-core";
+import { Project, AuthService, ProjectService, Element, ElementItem, ElementField, ElementCell, NotificationService, User } from "@forcrowd/backbone-client-core";
 import { Subscription } from "rxjs";
-import { finalize } from "rxjs/operators";
+import { finalize, flatMap, map } from "rxjs/operators";
 
 import { RemoveHistoryConfirmComponent } from "./remove-history.component";
 
@@ -15,13 +15,12 @@ import { AppProjectService } from "../app-core.module";
   styleUrls: ["timeline.component.css"]
 })
 export class TimelineComponent implements OnInit {
+  activeUser: User = null;
+  activeTimeline: Element = null;
+  activeProject: Project = null;
   entry = "";
-  changeElementName = false;
   isBusy: boolean;
-  project: Project = null;
-  subscriptions: Subscription[] = [];
-  timeline: string = null;
-  timelineName = "";
+  changeElementName = false;
 
   get currentUser() {
     return this.authService.currentUser;
@@ -91,7 +90,8 @@ export class TimelineComponent implements OnInit {
     private projectService: ProjectService,
     private activatedRoute: ActivatedRoute,
     private notificationService: NotificationService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private readonly router: Router
   ) {}
 
   cancelEditing() {
@@ -101,21 +101,45 @@ export class TimelineComponent implements OnInit {
     this.changeElementName = false;
   }
 
+  create() {
+    this.entry = this.entry.trim();
+
+    if (this.entry === "") {
+      return;
+    }
+
+    const values = {
+      Element: this.activeTimeline,
+      Name: this.entry
+    };
+
+    this.projectService.createElementItem(values);
+
+    this.isBusy = true;
+    this.projectService.saveChanges().subscribe(
+      () => {
+        this.entry = "";
+      },
+      null,
+      () => {
+        this.isBusy = false;
+      }
+    );
+  }
+
   // Create project (only one time)
   createProjectHistory(): void {
     this.isBusy = true;
-    this.project = (this.projectService as AppProjectService).createProjectHistory();
+    this.activeProject = (this.projectService as AppProjectService).createProjectHistory();
 
     this.projectService.saveChanges().subscribe(() => {
-      this.loadProject(this.project.Id);
+      this.loadProject(this.activeProject.Id);
       this.isBusy = false;
     });
   }
 
   // Create a new entry in timeline
-  createHistroyContent(): void {
-    if (!this.currentUser || !this.currentUser.isAuthenticated()) this.createProjectHistory();
-
+  createHistroyContent() {
     this.isBusy = true;
 
     if (!this.changeElementName) {
@@ -149,7 +173,7 @@ export class TimelineComponent implements OnInit {
 
         this.projectService.saveChanges().subscribe(() => {
           this.entry = "";
-          this.loadProject(this.project.Id);
+          this.loadProject(this.activeProject.Id);
           this.isBusy = false;
         });
       } else {
@@ -178,7 +202,7 @@ export class TimelineComponent implements OnInit {
       this.notificationService.notification.next("Timeline item has been change");
       this.entry = "";
       this.selectedElementCell = null;
-      this.loadProject(this.project.Id);
+      this.loadProject(this.activeProject.Id);
       this.isBusy = false;
     });
   }
@@ -199,15 +223,17 @@ export class TimelineComponent implements OnInit {
   // Set project element and field
   loadProject(projectId: number) {
     this.projectService.getProjectExpanded<Project>(projectId).subscribe(project => {
-      if (!project) return;
+      if (!project) {
+        return;
+      }
 
       // Project History
-      this.project = project;
+      this.activeProject = project;
 
-      this.timelineName = this.activatedRoute.snapshot.params["timeline-name"];
+      const timelineName = this.activatedRoute.snapshot.params["timeline-name"];
 
-      for (var i = 0; i < this.project.ElementSet.length; i++) {
-        if (this.timelineName === this.project.ElementSet[i].Name) {
+      for (let i = 0; i < this.activeProject.ElementSet.length; i++) {
+        if (timelineName === this.activeProject.ElementSet[i].Name) {
           this.selectTimeline(i);
           return;
         }
@@ -233,8 +259,8 @@ export class TimelineComponent implements OnInit {
 
   // Set selected timeline element
   selectTimeline(value: number): void {
-    if (this.project.ElementSet.length > 0) {
-      this.selectedElement = this.project.ElementSet[value];
+    if (this.activeProject.ElementSet.length > 0) {
+      this.selectedElement = this.activeProject.ElementSet[value];
       this.selectedElementField = this.selectedElement.ElementFieldSet[0];
       this.selectedElementLikeCountSet = this.selectedElement.ElementFieldSet[1].ElementCellSet; // for Like - Dislike
       this.selectedElementCellSet = this.selectedElementField.ElementCellSet as ElementCell[];
@@ -251,7 +277,7 @@ export class TimelineComponent implements OnInit {
         return;
       }
 
-      var likeItemIndex = this.selectedElement.ElementItemSet.indexOf(elementItem);
+      const likeItemIndex = this.selectedElement.ElementItemSet.indexOf(elementItem);
 
       this.projectService.removeElementItem(elementItem);
       this.projectService.removeElementItem(this.selectedElement.ElementItemSet[likeItemIndex]);
@@ -262,7 +288,7 @@ export class TimelineComponent implements OnInit {
           finalize(() => {
             this.entry = "";
             this.selectedElementCell = null;
-            this.loadProject(this.project.Id);
+            this.loadProject(this.activeProject.Id);
           })
         )
         .subscribe();
@@ -270,16 +296,52 @@ export class TimelineComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.authService.getUser(this.currentUser.UserName).subscribe(() => {
-      for (var i = 0; i < this.currentUser.ProjectSet.length; i++) {
-        var project = this.currentUser.ProjectSet[i];
+    const username = this.activatedRoute.snapshot.params["username"];
+    const timelineId = Number(this.activatedRoute.snapshot.params["timeline-id"]);
 
-        if (project.Name === "History App") {
-          this.project = project;
-          this.loadProject(this.project.Id);
-          break;
-        }
-      }
-    });
+    console.log("t", timelineId);
+
+    this.authService
+      .getUser(username)
+      .pipe(
+        flatMap(user => {
+          // Not found, navigate to 404
+          if (user === null) {
+            const url = window.location.href.replace(window.location.origin, "");
+            this.router.navigate(["/app/not-found", { url: url }]);
+            return;
+          }
+
+          this.activeUser = user;
+
+          console.log("u", user);
+
+          this.activeProject = user.ProjectSet.find(e => e.Origin === "http://history.forcrowd.org");
+          console.log("h", this.activeProject);
+
+          if (this.activeProject === null) {
+            const url = window.location.href.replace(window.location.origin, "");
+            this.router.navigate(["/app/not-found", { url: url }]);
+            return;
+          }
+
+          return this.projectService.getProjectExpanded(this.activeProject.Id).pipe(
+            map(() => {
+              const timeline = this.activeProject.ElementSet.find(e => e.Id === timelineId);
+
+              if (timeline === null) {
+                const url = window.location.href.replace(window.location.origin, "");
+                this.router.navigate(["/app/not-found", { url: url }]);
+                return;
+              }
+
+              this.activeTimeline = timeline;
+
+              console.log("t", timeline);
+            })
+          );
+        })
+      )
+      .subscribe();
   }
 }
