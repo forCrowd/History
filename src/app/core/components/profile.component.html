@@ -2,7 +2,7 @@
   <h1>{{ username }}`s Timelines</h1>
 </div>
 
-<div class="m-16">
+<div class="m-16" *ngIf="isOwner">
   <form #historyForm="ngForm" autocomplete="off">
     <mat-form-field>
       <input matInput id="timelineName" name="timelineName" type="text" placeholder="Write something" [(ngModel)]="timelineName" class="form-control" required />
