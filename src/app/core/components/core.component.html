@@ -64,9 +64,6 @@
       </button>
 
       <mat-menu #menu="matMenu" overlapTrigger="false">
-        <button mat-menu-item *ngIf="!displaySidebar" routerLink="/projects/new">
-          <span>New Project</span>
-        </button>
         <button mat-menu-item routerLink="/" [hidden]="!currentUser.isAuthenticated()">
           <span>Dashboard</span>
         </button>

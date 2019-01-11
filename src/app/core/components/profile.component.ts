@@ -4,7 +4,7 @@ import { ActivatedRoute } from "@angular/router";
 import { Router } from "@angular/router";
 import { AuthService, Element, Project, ProjectService } from "@forcrowd/backbone-client-core";
 
-import { ProfileRemoveProjectComponent } from "./profile-remove-project.component";
+import { RemoveTimelineComponent } from "./remove-timeline.component";
 
 @Component({
   selector: "profile",
@@ -53,7 +53,7 @@ export class ProfileComponent implements OnInit {
   }
 
   delete(timeline: Element) {
-    const dialogRef = this.matDialog.open(ProfileRemoveProjectComponent);
+    const dialogRef = this.matDialog.open(RemoveTimelineComponent);
 
     dialogRef.afterClosed().subscribe(confirmed => {
       if (!confirmed) {

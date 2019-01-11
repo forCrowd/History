@@ -2,9 +2,9 @@ import { Component, OnInit } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { MatDialog } from "@angular/material";
 import { Project, AuthService, ProjectService, Element, ElementItem, User } from "@forcrowd/backbone-client-core";
-import { finalize, flatMap, map } from "rxjs/operators";
+import { flatMap, map } from "rxjs/operators";
 
-import { RemoveHistoryConfirmComponent } from "./remove-history.component";
+import { RemoveItemComponent } from "./remove-item.component";
 
 @Component({
   selector: "timeline",
@@ -17,6 +17,7 @@ export class TimelineComponent implements OnInit {
   activeTimeline: Element = null;
   activeUser: User = null;
   isBusy: boolean;
+  isOwner = false;
 
   constructor(
     private readonly authService: AuthService,
@@ -51,7 +52,7 @@ export class TimelineComponent implements OnInit {
   }
 
   remove(elementItem: ElementItem) {
-    const dialogRef = this.dialog.open(RemoveHistoryConfirmComponent);
+    const dialogRef = this.dialog.open(RemoveItemComponent);
 
     dialogRef.afterClosed().subscribe(confirmed => {
       if (!confirmed) {
@@ -79,6 +80,7 @@ export class TimelineComponent implements OnInit {
           }
 
           this.activeUser = user;
+          this.isOwner = this.authService.currentUser === user;
 
           this.activeProject = user.ProjectSet.find(e => e.Origin === "http://history.forcrowd.org");
 

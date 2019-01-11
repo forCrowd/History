@@ -12,12 +12,11 @@ import { settings } from "../../settings/settings";
 // Components
 import { CoreComponent } from "./components/core.component";
 import { GettingStartedComponent } from "./components/getting-started.component";
-import { HistoryOverviewComponent } from "./components/history-overview.component";
 import { HomeComponent } from "./components/home.component";
 import { LandingPageComponent } from "./components/landing-page.component";
 import { ProfileComponent } from "./components/profile.component";
-import { ProfileRemoveProjectComponent } from "./components/profile-remove-project.component";
-import { RemoveHistoryConfirmComponent } from "./components/remove-history.component";
+import { RemoveItemComponent } from "./components/remove-item.component";
+import { RemoveTimelineComponent } from "./components/remove-timeline.component";
 import { TimelineComponent } from "./components/timeline.component";
 
 // Services
@@ -33,22 +32,6 @@ const appCoreRoutes: Routes = [
   { path: "", component: LandingPageComponent, data: { title: "Home" } },
   { path: "app/home", redirectTo: "", pathMatch: "full" },
   { path: "app/getting-started", component: GettingStartedComponent, data: { title: "Getting Started" } },
-
-  {
-    path: "edit/:timeline-name",
-    component: HistoryOverviewComponent,
-    canActivate: [AuthGuard],
-    canDeactivate: [CanDeactivateGuard],
-    resolve: { title: DynamicTitleResolve }
-  },
-
-  {
-    path: "history/:timeline-name",
-    component: HistoryOverviewComponent,
-    canActivate: [AuthGuard],
-    canDeactivate: [CanDeactivateGuard],
-    resolve: { title: DynamicTitleResolve }
-  },
 
   {
     path: ":username",
@@ -69,19 +52,11 @@ const coreConfig: ICoreConfig = {
 };
 
 @NgModule({
-  declarations: [
-    CoreComponent,
-    GettingStartedComponent,
-    HistoryOverviewComponent,
-    HomeComponent,
-    LandingPageComponent,
-    ProfileComponent,
-    ProfileRemoveProjectComponent,
-    RemoveHistoryConfirmComponent,
-    TimelineComponent
-  ],
-  entryComponents: [ProfileRemoveProjectComponent, RemoveHistoryConfirmComponent],
+  // tslint:disable-next-line:max-line-length
+  declarations: [CoreComponent, GettingStartedComponent, HomeComponent, LandingPageComponent, ProfileComponent, RemoveTimelineComponent, RemoveItemComponent, TimelineComponent],
+  entryComponents: [RemoveItemComponent, RemoveTimelineComponent],
   exports: [RouterModule, CoreComponent],
+  // tslint:disable-next-line:max-line-length
   imports: [BrowserModule, BrowserAnimationsModule, RouterModule.forRoot(appCoreRoutes), Angulartics2Module.forRoot(), CoreModule.configure(coreConfig), SharedModule],
   providers: [
     AuthGuard,
