@@ -98,7 +98,7 @@ export class CoreComponent implements OnDestroy, OnInit {
     this.subscriptions.push(currentUserChangedSubscription);
 
     // Media queries
-    var mediaSubscription = this.media.subscribe(change => {
+    const mediaSubscription = this.media.subscribe(change => {
       this.mediaQuery = change.mqAlias;
     });
     this.subscriptions.push(mediaSubscription);
