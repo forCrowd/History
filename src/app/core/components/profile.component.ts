@@ -5,6 +5,7 @@ import { Router } from "@angular/router";
 import { AuthService, Element, Project, ProjectService, User } from "@forcrowd/backbone-client-core";
 import { flatMap } from "rxjs/operators";
 
+import { Timeline } from "../entities/timeline";
 import { RemoveTimelineComponent } from "./remove-timeline.component";
 
 @Component({
@@ -17,7 +18,16 @@ export class ProfileComponent implements OnInit {
   activeUser: User = null;
   isBusy = false;
   isOwner = false;
+  Timeline = Timeline;
   timelineName = "";
+
+  get timelines() {
+    if (!this.activeProject) {
+      return [];
+    }
+
+    return this.activeProject.ElementSet as Timeline[];
+  }
 
   constructor(
     private readonly activatedRoute: ActivatedRoute,

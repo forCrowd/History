@@ -13,9 +13,9 @@
 </div>
 
 <div class="timeline-container" *ngIf="activeProject">
-  <mat-card *ngFor="let timeline of activeProject.ElementSet">
+  <mat-card *ngFor="let timeline of timelines">
     <mat-card-title>
-      <a routerLink="/{{ activeUser.UserName }}/{{ timeline.Id }}">{{ timeline.Name }}</a>
+      <a routerLink="/{{ activeUser.UserName }}/{{ timeline.UrlKey }}">{{ timeline.Name }}</a>
     </mat-card-title>
     <mat-card-content> {{ timeline.ElementItemSet.length }} </mat-card-content>
     <mat-card-actions *ngIf="isOwner">

@@ -5,6 +5,7 @@ import { Project, AuthService, ProjectService, Element, ElementItem, User } from
 import { flatMap, map } from "rxjs/operators";
 
 import { RemoveItemComponent } from "./remove-item.component";
+import { Timeline } from "../entities/timeline";
 
 @Component({
   selector: "timeline",
@@ -67,7 +68,7 @@ export class TimelineComponent implements OnInit {
 
   ngOnInit(): void {
     const username = this.activatedRoute.snapshot.params["username"];
-    const timelineId = Number(this.activatedRoute.snapshot.params["timeline-id"]);
+    const timelineKey = this.activatedRoute.snapshot.params["timeline-key"];
 
     this.isBusy = true;
     this.authService
@@ -93,7 +94,7 @@ export class TimelineComponent implements OnInit {
 
           return this.projectService.getProjectExpanded(this.activeProject.Id).pipe(
             map(() => {
-              const timeline = this.activeProject.ElementSet.find(e => e.Id === timelineId);
+              const timeline = (this.activeProject.ElementSet as Timeline[]).find(e => e.UrlKey === timelineKey);
 
               if (timeline === null) {
                 const url = window.location.href.replace(window.location.origin, "");

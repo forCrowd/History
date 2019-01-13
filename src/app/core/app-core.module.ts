@@ -5,9 +5,9 @@ import { RouterModule, Routes } from "@angular/router";
 import { Angulartics2Module } from "angulartics2";
 import { CoreModule, ICoreConfig, ProjectService } from "@forcrowd/backbone-client-core";
 
-import { SharedModule } from "../shared/shared.module";
-
 import { settings } from "../../settings/settings";
+import { SharedModule } from "../shared/shared.module";
+import { Timeline } from "./entities/timeline";
 
 // Components
 import { CoreComponent } from "./components/core.component";
@@ -39,7 +39,7 @@ const appCoreRoutes: Routes = [
     resolve: { title: DynamicTitleResolve }
   },
   {
-    path: ":username/:timeline-id",
+    path: ":username/:timeline-key",
     component: TimelineComponent,
     resolve: { title: DynamicTitleResolve }
   }
@@ -48,7 +48,10 @@ const appCoreRoutes: Routes = [
 const coreConfig: ICoreConfig = {
   environment: settings.environment,
   serviceApiUrl: settings.serviceApiUrl,
-  serviceODataUrl: settings.serviceODataUrl
+  serviceODataUrl: settings.serviceODataUrl,
+  entityManagerConfig: {
+    elementType: Timeline
+  }
 };
 
 @NgModule({
