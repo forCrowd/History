@@ -7,9 +7,6 @@ dist/
 npm-debug.log
 node_modules/
 
-
-
-
 # Others
 .DS_Store
 ~$*
