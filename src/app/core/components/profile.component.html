@@ -12,7 +12,7 @@
   </form>
 </div>
 
-<div class="m-16" *ngIf="project">
+<div class="timeline-container" *ngIf="project">
   <mat-card *ngFor="let timeline of project.ElementSet">
     <mat-card-title>
       <a routerLink="/{{ username }}/{{ timeline.Id }}">{{ timeline.Name }}</a>

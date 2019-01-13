@@ -19,10 +19,9 @@ h2 {
 }
 
 .mat-card {
-  width: 200px;
-  float: left !important;
-  margin: 0 5px 20px 5px !important;
-  padding: 0 0 18px 18px !important;
+  width: 20%;
+  margin: 1%;
+  padding: 10px !important;
 }
 
 .mat-card-title {
@@ -102,4 +101,11 @@ mat-card .board {
   -o-justify-content: center;
   -webkit-justify-content: center;
   padding: 2em;
+}
+
+.timeline-container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  margin-top: 30px;
 }
