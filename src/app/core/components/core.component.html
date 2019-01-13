@@ -44,17 +44,6 @@
 
       <span class="spacer"></span>
 
-      <!-- Search Form -->
-      <!--
-      <form #searchForm="ngForm" autocomplete="off">
-        <input matInput class="searchInput" [ngClass]="{'searchInput-landing': isHomePage()}" id="searchKey" name="searchKey"
-          (enter)="search()" [(ngModel)]="searchKey">
-        <button mat-icon-button type="submit" class="searchIcon" (click)="search()">
-          <i class="material-icons">search</i>
-        </button>
-      </form>
-      -->
-
       <a class="link" fxShow.lt-md="true" fxShow.gt-sm="true" routerLink="/app/account/register" [hidden]="currentUser.isAuthenticated()">
         <span class="ml-1">Register</span>
       </a>
@@ -75,9 +64,6 @@
       </button>
 
       <mat-menu #menu="matMenu" overlapTrigger="false">
-        <button mat-menu-item *ngIf="!displaySidebar" routerLink="/projects/new">
-          <span>New Project</span>
-        </button>
         <button mat-menu-item routerLink="/" [hidden]="!currentUser.isAuthenticated()">
           <span>Dashboard</span>
         </button>
@@ -110,11 +96,8 @@
           <i class="fa fa-envelope fa-lg" aria-hidden="true"></i>
         </a>
         <span style="margin: auto;">&nbsp;</span>
-        <a mat-button routerLink="/app/contributors" class="footer-right">
-          Contributors
-        </a>
         <a mat-button href="https://github.com/forCrowd/History/blob/master/CHANGELOG.md" target="_blank" class="footer-right">
-          Version 0.1.4
+          Version 0.1.5
         </a>
       </div>
     </mat-sidenav-content>

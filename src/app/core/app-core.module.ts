@@ -1,24 +1,23 @@
-import { Component, NgModule } from "@angular/core";
+import { NgModule } from "@angular/core";
 import { BrowserModule } from "@angular/platform-browser";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { RouterModule, Routes } from "@angular/router";
 import { Angulartics2Module } from "angulartics2";
 import { CoreModule, ICoreConfig, ProjectService } from "@forcrowd/backbone-client-core";
 
-import { SharedModule } from "../shared/shared.module";
-
 import { settings } from "../../settings/settings";
+import { SharedModule } from "../shared/shared.module";
+import { Timeline } from "./entities/timeline";
 
 // Components
-import { ContributorsComponent } from "./components/contributors.component";
 import { CoreComponent } from "./components/core.component";
+import { GettingStartedComponent } from "./components/getting-started.component";
 import { HomeComponent } from "./components/home.component";
 import { LandingPageComponent } from "./components/landing-page.component";
 import { ProfileComponent } from "./components/profile.component";
-import { ProfileRemoveProjectComponent } from "./components/profile-remove-project.component";
-import { SearchComponent } from "./components/search.component";
-import { RemoveHistoryConfirmComponent } from "./components/remove-history.component";
-import { HistoryOverviewComponent } from "./components/history-overview.component";
+import { RemoveItemComponent } from "./components/remove-item.component";
+import { RemoveTimelineComponent } from "./components/remove-timeline.component";
+import { TimelineComponent } from "./components/timeline.component";
 
 // Services
 import { AppProjectService } from "./app-project.service";
@@ -26,63 +25,42 @@ import { AuthGuard } from "./auth-guard.service";
 import { CanDeactivateGuard } from "./can-deactivate-guard.service";
 import { DynamicTitleResolve } from "./dynamic-title-resolve.service";
 
-export { AppProjectService, AuthGuard, CanDeactivateGuard, DynamicTitleResolve }
-
-// TODO: Remove! Only here to test appErrorHandler on production
-@Component({
-  template: ``
-})
-export class ExComponent {
-  constructor() { throw new Error("test"); }
-}
+export { AppProjectService, AuthGuard, CanDeactivateGuard, DynamicTitleResolve };
 
 const appCoreRoutes: Routes = [
-
   // Core
   { path: "", component: LandingPageComponent, data: { title: "Home" } },
   { path: "app/home", redirectTo: "", pathMatch: "full" },
-  { path: "app/contributors", component: ContributorsComponent, data: { title: "Contributors" } },
-  { path: "app/getting-started", component: ProfileComponent, data: { title: "Getting Started" } },
-  { path: "app/search", component: SearchComponent, data: { title: "Search" } },
-  { path: "app/ex", component: ExComponent }, // TODO: Remove! Only here to test appErrorHandler on production
+  { path: "app/getting-started", component: GettingStartedComponent, data: { title: "Getting Started" } },
 
-  { path: "edit/:timeline-name", component: HistoryOverviewComponent, canActivate: [AuthGuard], canDeactivate: [CanDeactivateGuard], resolve: { title: DynamicTitleResolve } }
-
+  {
+    path: ":username",
+    component: ProfileComponent,
+    resolve: { title: DynamicTitleResolve }
+  },
+  {
+    path: ":username/:timeline-key",
+    component: TimelineComponent,
+    resolve: { title: DynamicTitleResolve }
+  }
 ];
 
 const coreConfig: ICoreConfig = {
   environment: settings.environment,
   serviceApiUrl: settings.serviceApiUrl,
-  serviceODataUrl: settings.serviceODataUrl
+  serviceODataUrl: settings.serviceODataUrl,
+  entityManagerConfig: {
+    elementType: Timeline
+  }
 };
 
 @NgModule({
-  declarations: [
-    ContributorsComponent,
-    CoreComponent,
-    ExComponent,
-    HomeComponent,
-    LandingPageComponent,
-    ProfileComponent,
-    ProfileRemoveProjectComponent,
-    SearchComponent,
-    HistoryOverviewComponent,
-  ],
-  entryComponents: [
-    ProfileRemoveProjectComponent,
-  ],
-  exports: [
-    RouterModule,
-    CoreComponent,
-  ],
-  imports: [
-    SharedModule,
-    BrowserModule,
-    BrowserAnimationsModule,
-    RouterModule.forRoot(appCoreRoutes),
-    Angulartics2Module.forRoot(),
-    CoreModule.configure(coreConfig)
-  ],
+  // tslint:disable-next-line:max-line-length
+  declarations: [CoreComponent, GettingStartedComponent, HomeComponent, LandingPageComponent, ProfileComponent, RemoveTimelineComponent, RemoveItemComponent, TimelineComponent],
+  entryComponents: [RemoveItemComponent, RemoveTimelineComponent],
+  exports: [RouterModule, CoreComponent],
+  // tslint:disable-next-line:max-line-length
+  imports: [BrowserModule, BrowserAnimationsModule, RouterModule.forRoot(appCoreRoutes), Angulartics2Module.forRoot(), CoreModule.configure(coreConfig), SharedModule],
   providers: [
     AuthGuard,
     CanDeactivateGuard,
@@ -90,8 +68,8 @@ const coreConfig: ICoreConfig = {
     // Project service
     {
       provide: ProjectService,
-      useClass: AppProjectService,
-    },
+      useClass: AppProjectService
+    }
   ]
 })
-export class AppCoreModule { }
+export class AppCoreModule {}

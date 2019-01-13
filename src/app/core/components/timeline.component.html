@@ -1,0 +1,43 @@
+<div *ngIf="activeTimeline">
+  <div class="m-16">
+    <h1>
+      <a routerLink="/{{ activeUser.UserName }}">{{ activeUser.UserName }}</a> / {{ activeTimeline.Name }}
+    </h1>
+  </div>
+
+  <div class="m-16" *ngIf="isOwner">
+    <form #historyForm="ngForm" autocomplete="off">
+      <mat-form-field>
+        <input matInput id="itemName" name="itemName" type="text" placeholder="Write something" [(ngModel)]="activeItem.Name" class="form-control" required />
+      </mat-form-field>
+      <button mat-flat-button (click)="create()" [disabled]="historyForm.form.invalid || isBusy">Save</button>
+      <button mat-flat-button class="other" (click)="cancel()" color="warn" [disabled]="historyForm.form.invalid || isBusy">Cancel</button>
+    </form>
+  </div>
+
+  <div class="m-16 d-g">
+    <div class="m-16 mb-150">
+      <ul class="timeline">
+        <li class="tl-item" *ngFor="let timelineItem of activeTimeline.ElementItemSet.reverse(); let i = index">
+          <div class="tl-wrap b-primary">
+            <span class="tl-date text-muted">{{ timelineItem.CreatedOn | amTimeAgo }}</span>
+            <div (click)="edit(timelineItem)" class="tl-content box-color text-color box-shadow p-a-sm f-l tl-c-w80p">
+              <span class="arrow b-white left pull-top"></span> {{ timelineItem.Name }}
+            </div>
+            <div *ngIf="isOwner" class="tl-content tl-content-bg-ld box-color text-color box-shadow p-a-sm">
+              <span class="arrow arrow-bg-ld b-white left pull-top"></span>
+              <span class="pull-right"> <i class="fa fa-times" (click)="remove(timelineItem)" aria-hidden="true"></i> </span>
+            </div>
+          </div>
+        </li>
+        <li class="tl-item tl-left">
+          <div class="tl-wrap b-warn">
+            <span class="tl-date text-muted">{{ activeTimeline.CreatedOn | amTimeAgo }}</span>
+            <div class="tl-content box-color text-color box-shadow p-a-sm f-l tl-c-w80p"><span class="arrow b-white left pull-top"></span> Timeline created</div>
+          </div>
+        </li>
+        <li class="tl-footer"><i class="ui-icon fa fa-history b-white c-white b-2x info"></i></li>
+      </ul>
+    </div>
+  </div>
+</div>

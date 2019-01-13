@@ -1,174 +1,111 @@
 import { Component, OnInit } from "@angular/core";
 import { MatDialog } from "@angular/material";
-import { Project, AuthService, ProjectService, Element, ElementItem, ElementField, ElementFieldDataType, User } from "@forcrowd/backbone-client-core";
+import { ActivatedRoute } from "@angular/router";
+import { Router } from "@angular/router";
+import { AuthService, Element, Project, ProjectService, User } from "@forcrowd/backbone-client-core";
+import { flatMap } from "rxjs/operators";
 
-// Service
-import { AppProjectService } from "../app-core.module";
-import { ProfileRemoveProjectComponent } from './profile-remove-project.component';
+import { Timeline } from "../entities/timeline";
+import { RemoveTimelineComponent } from "./remove-timeline.component";
 
 @Component({
   selector: "profile",
   templateUrl: "profile.component.html",
-  styleUrls: ["profile.component.css"],
+  styleUrls: ["profile.component.css"]
 })
 export class ProfileComponent implements OnInit {
+  activeProject: Project = null;
+  activeUser: User = null;
+  isBusy = false;
+  isOwner = false;
+  Timeline = Timeline;
+  timelineName = "";
 
-  entry: string = "";
-  project: Project = null;
-  profileUser: User = null;
-  isBusy: boolean;
-
-  get currentUser() {
-    return this.authService.currentUser;
-  }
-
-  get selectedElement(): Element {
-    return this.fields.selectedElement;
-  }
-  set selectedElement(value: Element) {
-    if (this.fields.selectedElement !== value) {
-      this.fields.selectedElement = value;
-    }
-  }
-
-  private fields: {
-    selectedElement: Element,
-  } = {
-      selectedElement: null,
+  get timelines() {
+    if (!this.activeProject) {
+      return [];
     }
 
-  constructor(private authService: AuthService,
-    private projectService: ProjectService,
-    private dialog: MatDialog) {
+    return this.activeProject.ElementSet as Timeline[];
   }
 
-  cancelEditing() {
-    this.entry = "";
-    this.isBusy = false;
-  }
+  constructor(
+    private readonly activatedRoute: ActivatedRoute,
+    private readonly authService: AuthService,
+    private readonly matDialog: MatDialog,
+    private readonly projectService: ProjectService,
+    private readonly router: Router
+  ) {}
 
-  // Create project (only one time)
-  createProjectHistory(): void {
+  create() {
+    this.timelineName = this.timelineName.trim();
+
+    if (!this.timelineName) {
+      return;
+    }
+
+    const timeline = {
+      Project: this.activeProject,
+      Name: this.timelineName
+    };
+
+    this.projectService.createElement(timeline);
+
     this.isBusy = true;
-    this.project = (this.projectService as AppProjectService).createProjectHistory();
-
-    this.projectService.saveChanges().subscribe(() => {
-      this.loadProject(this.project.Id);
-      this.isBusy = false;
-    });
+    this.projectService.saveChanges().subscribe(
+      () => {
+        this.timelineName = "";
+      },
+      null,
+      () => {
+        this.isBusy = false;
+      }
+    );
   }
 
-  // Create a new History Timeline
-  createNewHistroyTimeline(): void {
-
-    // New Timeline Element
-    const element = this.projectService.createElement({
-      Project: this.project,
-      Name: this.entry
-    }) as Element;
-
-    // Field
-    const elementField = this.projectService.createElementField({
-      Element: element,
-      Name: this.entry,
-      DataType: ElementFieldDataType.String,
-      SortOrder: 1
-    }) as ElementField;
-
-    // Item
-    const elementItem = this.projectService.createElementItem({
-      Element: element,
-      Name: this.entry
-    }) as ElementItem;
-
-    // Cell
-    this.projectService.createElementCell({
-      ElementField: elementField,
-      ElementItem: elementItem,
-      StringValue: "First",
-    });
-
-    // Like Dislikes Count
-    const elementField2 = this.projectService.createElementField({
-      Element: element,
-      Name: "likes",
-      DataType: ElementFieldDataType.Decimal,
-      UseFixedValue: false,
-      RatingEnabled: false,
-      SortOrder: 0
-    }) as ElementField;
-
-    // Item
-    const elementItem2 = this.projectService.createElementItem({
-      Element: element,
-      Name: "likes"
-    }) as ElementItem;
-
-    // Cell
-    const cell2 = this.projectService.createElementCell({
-      ElementField: elementField2,
-      ElementItem: elementItem2
-    });
-
-    this.projectService.createUserElementCell(cell2, 0);
-
-    this.projectService.saveChanges().subscribe(() => {
-      this.entry = "";
-      this.isBusy = false;
-    });
-
-  }
-
-  // Delete Timeline (history)
-  deleteSelectedTimeline(element: Element): void {
-
-    const dialogRef = this.dialog.open(ProfileRemoveProjectComponent);
+  delete(timeline: Element) {
+    const dialogRef = this.matDialog.open(RemoveTimelineComponent);
 
     dialogRef.afterClosed().subscribe(confirmed => {
-
       if (!confirmed) {
         return;
       }
 
-      this.projectService.removeElement(element);
+      this.projectService.removeElement(timeline);
       this.projectService.saveChanges().subscribe();
     });
   }
 
-  // Set project element and field
-  loadProject(projectId: number) {
-    this.projectService.getProjectExpanded<Project>(projectId).subscribe(project => {
-      if (!project) return;
-
-      // Project
-      this.project = project;
-      this.isBusy = false;
-    });
-  }
-
   ngOnInit(): void {
+    const userName = this.activatedRoute.snapshot.params["username"];
 
-    if (!this.currentUser || !this.currentUser.isAuthenticated()) {
-      this.createProjectHistory();
-      return;
-    }
+    this.isBusy = true;
+    this.authService
+      .getUser(userName)
+      .pipe(
+        flatMap(user => {
+          if (user === null) {
+            const url = window.location.href.replace(window.location.origin, "");
+            this.router.navigate(["/app/not-found", { url: url }]);
+            return;
+          }
 
-    this.authService.getUser(this.currentUser.UserName).subscribe((user) => {
+          this.activeUser = user;
+          this.isOwner = this.authService.currentUser === user;
 
-      this.profileUser = user;
+          this.activeProject = user.ProjectSet.find(e => e.Origin === "http://history.forcrowd.org");
 
-      for (var i = 0; i < this.currentUser.ProjectSet.length; i++) {
+          if (this.activeProject === null) {
+            const url = window.location.href.replace(window.location.origin, "");
+            this.router.navigate(["/app/not-found", { url: url }]);
+            return;
+          }
 
-        var project = this.currentUser.ProjectSet[i];
-
-        if (project.Name === "History App") {
-          this.project = project;
-          this.loadProject(this.project.Id);
-          break;
-        }
-      }
-
-    });
+          return this.projectService.getProjectExpanded(this.activeProject.Id);
+        })
+      )
+      .subscribe(null, null, () => {
+        this.isBusy = false;
+      });
   }
-
 }

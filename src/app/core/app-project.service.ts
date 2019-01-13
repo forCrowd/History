@@ -1,71 +1,62 @@
 import { Injectable } from "@angular/core";
-import { Element, ElementField, ElementFieldDataType, ElementItem, ProjectService, Project } from "@forcrowd/backbone-client-core";
-
-import { settings } from "../../settings/settings";
+import { Element, ProjectService, Project } from "@forcrowd/backbone-client-core";
 
 @Injectable()
 export class AppProjectService extends ProjectService {
-
-
   createProjectHistory(): Project {
-
     // Project
     const project = super.createProjectEmpty();
     project.Name = "History App";
-    project.Origin = "http://";
+    project.Origin = "http://history.forcrowd.org";
 
-    // Element
-    const element = super.createElement({
+    // Books
+    const books = super.createElement({
       Project: project,
-      Name: "My First Timeline"
+      Name: "Books"
     }) as Element;
 
-    // Field
-    const elementField = super.createElementField({
-      Element: element,
-      Name: "New Field",
-      DataType: ElementFieldDataType.String,
-      SortOrder: 1
-    }) as ElementField;
-
-    // Item
-    const elementItem = super.createElementItem({
-      Element: element,
-      Name: "Firt Entry"
-    }) as ElementItem;
-
-    // Cell 1
-    super.createElementCell({
-      ElementField: elementField,
-      ElementItem: elementItem,
-      StringValue: "Please edit me"
+    // First book
+    super.createElementItem({
+      Element: books,
+      Name: "My first book entry"
     });
 
-    // Like Dislikes Count
-    const elementField2 = super.createElementField({
-      Element: element,
-      Name: "likes",
-      DataType: ElementFieldDataType.Decimal,
-      UseFixedValue: false,
-      RatingEnabled: false,
-      SortOrder: 0
-    }) as ElementField;
+    // Articles
+    const articles = super.createElement({
+      Project: project,
+      Name: "Articles"
+    }) as Element;
 
-    // Item
-    const elementItem2 = super.createElementItem({
-      Element: element,
-      Name: "likes"
-    }) as ElementItem;
-
-    // Cell
-    const cell2 = super.createElementCell({
-      ElementField: elementField2,
-      ElementItem: elementItem2
+    // First article
+    super.createElementItem({
+      Element: articles,
+      Name: "My first article entry"
     });
 
-    super.createUserElementCell(cell2, 0);
+    // Movies
+    const movies = super.createElement({
+      Project: project,
+      Name: "Movies"
+    }) as Element;
+
+    // First movie
+    super.createElementItem({
+      Element: movies,
+      Name: "My first movie entry"
+    });
+
+    // Travels
+    const travels = super.createElement({
+      Project: project,
+      Name: "Travels"
+    }) as Element;
+
+    // First movie
+    super.createElementItem({
+      Element: travels,
+      Name: "My first travel entry"
+    });
 
     return project;
   }
-
 }

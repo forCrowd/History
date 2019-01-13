@@ -1,13 +1,12 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnDestroy, OnInit } from "@angular/core";
 import { User, AuthService } from "@forcrowd/backbone-client-core";
 import { Subscription } from "rxjs";
 
 @Component({
   selector: "landing-page",
-  templateUrl: "landing-page.component.html",
+  templateUrl: "landing-page.component.html"
 })
-export class LandingPageComponent implements OnInit {
-
+export class LandingPageComponent implements OnDestroy, OnInit {
   currentUser: User = null;
   subscriptions: Subscription[] = [];
 
@@ -22,12 +21,10 @@ export class LandingPageComponent implements OnInit {
   }
 
   ngOnInit(): void {
-
     // Current user changed subscription
     const currentUserChangedSubscription = this.authService.currentUserChanged.subscribe(currentUser => {
       this.currentUser = currentUser;
     });
     this.subscriptions.push(currentUserChangedSubscription);
-
   }
 }
