@@ -1,5 +1,9 @@
 ### Changelog
 
+**0.1.6**
+
+- Https enabled
+
 **0.1.5**
 
 - Clean-up
