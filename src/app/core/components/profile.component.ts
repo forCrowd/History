@@ -2,7 +2,8 @@ import { Component, OnInit } from "@angular/core";
 import { MatDialog } from "@angular/material";
 import { ActivatedRoute } from "@angular/router";
 import { Router } from "@angular/router";
-import { AuthService, Element, Project, ProjectService } from "@forcrowd/backbone-client-core";
+import { AuthService, Element, Project, ProjectService, User } from "@forcrowd/backbone-client-core";
+import { flatMap } from "rxjs/operators";
 
 import { RemoveTimelineComponent } from "./remove-timeline.component";
 
@@ -12,11 +13,11 @@ import { RemoveTimelineComponent } from "./remove-timeline.component";
   styleUrls: ["profile.component.css"]
 })
 export class ProfileComponent implements OnInit {
+  activeProject: Project = null;
+  activeUser: User = null;
   isBusy = false;
   isOwner = false;
-  project: Project = null;
   timelineName = "";
-  username: string = null;
 
   constructor(
     private readonly activatedRoute: ActivatedRoute,
@@ -34,7 +35,7 @@ export class ProfileComponent implements OnInit {
     }
 
     const timeline = {
-      Project: this.project,
+      Project: this.activeProject,
       Name: this.timelineName
     };
 
@@ -66,33 +67,35 @@ export class ProfileComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.username = this.activatedRoute.snapshot.params["username"];
-
-    if (!this.username) {
-      const command = this.authService.currentUser.isAuthenticated() ? this.authService.currentUser.UserName : "";
-
-      this.router.navigate([command]);
-      return;
-    }
-
-    this.isOwner = this.authService.currentUser.UserName === this.username;
+    const userName = this.activatedRoute.snapshot.params["username"];
 
     this.isBusy = true;
-    this.projectService.getProjectSet(this.username).subscribe(
-      projectSet => {
-        for (let i = 0; i < projectSet.length; i++) {
-          const project = projectSet[i];
-          if (project.Name === "History App") {
-            this.projectService.getProjectExpanded(project.Id).subscribe(projectExpanded => {
-              this.project = projectExpanded;
-            });
+    this.authService
+      .getUser(userName)
+      .pipe(
+        flatMap(user => {
+          if (user === null) {
+            const url = window.location.href.replace(window.location.origin, "");
+            this.router.navigate(["/app/not-found", { url: url }]);
+            return;
           }
-        }
-      },
-      null,
-      () => {
+
+          this.activeUser = user;
+          this.isOwner = this.authService.currentUser === user;
+
+          this.activeProject = user.ProjectSet.find(e => e.Origin === "http://history.forcrowd.org");
+
+          if (this.activeProject === null) {
+            const url = window.location.href.replace(window.location.origin, "");
+            this.router.navigate(["/app/not-found", { url: url }]);
+            return;
+          }
+
+          return this.projectService.getProjectExpanded(this.activeProject.Id);
+        })
+      )
+      .subscribe(null, null, () => {
         this.isBusy = false;
-      }
-    );
+      });
   }
 }

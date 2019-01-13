@@ -69,6 +69,7 @@ export class TimelineComponent implements OnInit {
     const username = this.activatedRoute.snapshot.params["username"];
     const timelineId = Number(this.activatedRoute.snapshot.params["timeline-id"]);
 
+    this.isBusy = true;
     this.authService
       .getUser(username)
       .pipe(
@@ -105,7 +106,9 @@ export class TimelineComponent implements OnInit {
           );
         })
       )
-      .subscribe();
+      .subscribe(null, null, () => {
+        this.isBusy = false;
+      });
   }
 
   private save() {

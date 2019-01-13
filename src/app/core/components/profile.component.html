@@ -1,5 +1,5 @@
-<div class="m-16">
-  <h1>{{ username }}`s Timelines</h1>
+<div class="m-16" *ngIf="activeUser">
+  <h1>{{ activeUser.UserName }}`s Timelines</h1>
 </div>
 
 <div class="m-16" *ngIf="isOwner">
@@ -12,10 +12,10 @@
   </form>
 </div>
 
-<div class="timeline-container" *ngIf="project">
-  <mat-card *ngFor="let timeline of project.ElementSet">
+<div class="timeline-container" *ngIf="activeProject">
+  <mat-card *ngFor="let timeline of activeProject.ElementSet">
     <mat-card-title>
-      <a routerLink="/{{ username }}/{{ timeline.Id }}">{{ timeline.Name }}</a>
+      <a routerLink="/{{ activeUser.UserName }}/{{ timeline.Id }}">{{ timeline.Name }}</a>
     </mat-card-title>
     <mat-card-content> {{ timeline.ElementItemSet.length }} </mat-card-content>
     <mat-card-actions *ngIf="isOwner">
